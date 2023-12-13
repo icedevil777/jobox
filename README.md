@@ -13,3 +13,4 @@ cp .env.dist .env
 ```bash
 sudo docker-compose up --build
 ```
+![Alt text](screen.png)
