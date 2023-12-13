@@ -1,0 +1,526 @@
+{% extends 'industrial/base.html' %}
+{% load static %}
+{% block page_title %}Разместить вакансию{% endblock %}
+
+{% block page_content %}
+
+{% if job_instance %}
+<h1>Редактирование вакансии id0000{{ job_instance.id }}</h1>
+{% else %}
+<h1>Разместить вакансию</h1>
+{% endif %}
+
+<p class="pxp-text-light">Срок размещения 30 дней.
+    Снять публикацию Вы можете в любое время. Предварительно заявки проходят
+    обязательную модерацию и могут быть
+    заблокированы по причине нарушений и правил публикации или законов РФ
+    (федеральных и отдельных кодексов).</p>
+{% if valid_error %}
+<p style="color: red">Данные введены не корректно!</p>
+{% endif %}
+
+<style>
+input:placeholder-shown {
+    border: 2px solid black;
+}
+
+input {
+    border: 4px solid black;
+}
+
+</style>
+
+<form id="job_form" method="post">
+
+    {% csrf_token %}
+
+    <div class="row mt-4 mt-lg-5">
+        <div class="col-xxl-6">
+
+            <div class="mb-3">
+                <label for="pxp-company-job-title" class="form-label">Профессия
+                    или должность</label>
+                <input
+                        type="text"
+                        id="pxp-company-job-title"
+                        class="input_boarder form-control input__requirements"
+                        placeholder="Например Слесарь или Менеджер"
+                        pattern="^[A-Za-zА-Яа-яЁё][A-Za-zА-Яа-яЁё\s-]+$"
+                        title="Поле должно содержать и начинаться с символов русского или латинского алфавита, может включать в себя пробелы и знак дефиса"
+                        name="title"
+                        required
+                        minlength="2"
+                        maxlength="30"
+                        {% if job_instance %}
+                        value="{{ job_instance.title }}"
+                        {% endif %}
+                >
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xxl-3">
+            <label for="pxp-company-job-location" class="form-label">Квалификация</label>
+            <input
+                    type="text"
+                    id="pxp-company-job-location"
+                    class="form-control"
+                    placeholder="Например: 3 разряд или middle"
+                    name="qualification"
+                    minlength="2"
+                    maxlength="20"
+                    pattern="^[A-Za-z0-9А-Яа-яЁё][A-Za-z0-9А-Яа-яЁё\s-]+$"
+                    title="Поле должно содержать и начинаться с символов русского, латинского алфавита или цифр, может включать в себя пробелы и знак дефиса"
+
+                    {% if job_instance %}
+                    value="{{ job_instance.qualification }}"
+                    {% endif %}
+            >
+        </div>
+        <div class="col-md-6 col-xxl-3">
+
+            <div class="mb-3">
+                <label for="pxp-company-job-category" class="form-label">Категория</label>
+
+                <select id="pxp-company-job-category" class="form-select"
+                        name="category" required>
+                    <option value="" hidden="">Выбрать категорию</option>
+                    {% for category in categories %}
+                    <option
+                        {% if job_instance %}
+                        {% if job_instance.category.id == category.id %}
+                        selected="selected"
+                        {% endif %}
+                        {% endif %}
+                        value="{{ category.id }}"
+                    >{{ category.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-xxl-4">
+
+            <div class="mb-3">
+                <label for="pxp-company-job-level" class="form-label">Опыт
+                    работы</label>
+                <select id="pxp-company-job-level" class="form-select" required
+                        name="experience">
+                    <option value="{{ experiences.0.id }}" selected="selected" hidden="">{{ experiences.0 }}</option>
+                    {% for experience in experiences %}
+                    <option
+                            {% if job_instance %}
+                            {% if job_instance.experience.id == experience.id %}
+                            selected=""
+                            {% endif %}
+                            {% endif %}
+                            value="{{ experience.id }}"
+                    >{{ experience.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+        <div class="col-md-6 col-xxl-4">
+
+            <div class="mb-3">
+                <label for="pxp-company-job-level" class="form-label">Тип занятости</label>
+                <select id="pxp-company-job-level" class="form-select" required
+                        name="employment_type">
+                    <option value="{{ employment_types.0.id }}" selected="selected" hidden="">{{ employment_types.0 }}</option>
+                    {% for employment_type in employment_types %}
+                    <option
+                            {% if job_instance %}
+                            {% if job_instance.employment_type.id == employment_type.id %}
+                            selected=""
+                            {% endif %}
+                            {% endif %}
+                            value="{{ employment_type.id }}"
+                    >{{ employment_type.title }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xxl-4">
+
+            <div class="mb-3">
+                <label for="pxp-company-job-level" class="form-label">График
+                    работы</label>
+
+                <select id="pxp-company-job-level" class="form-select" required
+                        name="work_schedule">
+                    <option value="{{ work_schedules.0.id }}" selected="selected" hidden="">{{ work_schedules.0 }}</option>
+                    {% for work_schedule in work_schedules %}
+                    <option
+                            {% if job_instance %}
+                            {% if job_instance.work_schedule.id == work_schedule.id %}
+                            selected=""
+                            {% endif %}
+                            {% endif %}
+
+                            value="{{ work_schedule.id }}"
+                    >{{ work_schedule.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-xxl-4">
+            <div class="mb-3">
+                <label for="pxp-company-location" class="form-label">Локация
+                    (город, населенный пункт РФ)</label>
+                <select id="pxp-company-location" style="border: 1px solid #2c2929;"
+                        class="form-select select2-location" name="location"
+                        required>
+                    <option value="" hidden="">Выбрать город</option>
+                    {% for location in locations %}
+                    <option
+                            {% if job_instance %}
+                            {% if job_instance.location.id == location.id %}
+                            selected=""
+                            {% endif %}
+                            {% endif %}
+                            value="{{ location.id }}"
+                    >{{ location.city }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+        </div>
+
+
+        <div class="col-md-6 col-xxl-4">
+            <div class="mb-3">
+                <div class="mb-3">
+                    <label for="pxp-company-job-selery" class="form-label">Зарплата</label>
+                    <input
+                            type="number"
+                            id="pxp-company-job-selery"
+                            class="form-control"
+                            placeholder="Сумма в руб."
+                            name="salary"
+                            required
+                            max="10000000"
+
+                            {% if job_instance %}
+                            value="{{ job_instance.salary }}"
+                            {% endif %}
+                    >
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xxl-4">
+            <div class="mb-3">
+                <label for="pxp-company-job-type" class="form-label">Доп. условие по зарплате</label>
+                <select id="pxp-company-job-type" class="form-select" name="salary_condition" required>
+                    <option value="{{ salary_conditions.3.id }}" selected="selected" hidden="">{{ salary_conditions.3 }}</option>
+                    {% for salary_condition in salary_conditions %}
+                    <option
+                            {% if job_instance %}
+                            {% if job_instance.salary_condition.id == salary_condition.id %}
+                            selected=""
+                            {% endif %}
+                            {% endif %}
+                            value="{{ salary_condition.id }}"
+                    >{{ salary_condition.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h4>Дополнительные условия поиска </h4>
+        <div class="col-md-9 col-xxl-10">
+            <div class="mb-3" id="org_div">
+                <p class="pxp-text-light">Тэги запроса. Особые условия.
+                    Cпециальные предложения.</p>
+                {% for tag in tags %}
+                <div class="form-check form-check-inline">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="selected_tag_{{ tag.id }}"
+                        value="{{ tag.id }}"
+                        name="selected_tag_{{ tag.id }}"
+
+                        {% if job_instance %}
+                            {% for selected_tag in job_instance.tags.all %}
+                                {% if selected_tag.id == tag.id %} checked=""{% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    >
+                    <label class="form-check-label" for="selected_tag_{{ tag.id }}">{{ tag.title}}</label>
+
+
+                </div>
+                {% endfor %}
+                <div id="main">
+                {% for ind_tag in all_ind_tags %}
+                <div class="form-check form-check-inline" id="ind_app_div">
+                     <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="selected_ind_tag_{{ ind_tag.id }}"
+                        value="{{ ind_tag.id  }}"
+                        name="selected_ind_tag_{{ ind_tag.id }}"
+                        onchange="clear1('{{ ind_tag.title }}');"
+                        {% for selected_tag in ind_tags %}
+                            {% if ind_tag.title == selected_tag.title %}
+                            checked=""
+                            {% endif %}
+                        {% endfor %}
+                     >
+                     <label class="form-check-label" for="selected_ind_tag_{{ ind_tag.id }}">{{ ind_tag.title}}</label>
+                </div>
+                {% endfor %}
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-3 col-xxl-2">
+            <div class="mb-3">
+                <p class="pxp-text-light">Добавить условие поиска</p>
+                <input class="form-control" type="text" id="job-ind-tag"
+                       name="ind_tag" maxlength="20" minlength="2"
+                       style="padding: 0.25rem; margin-bottom: 3%; border: 1px solid black;">
+                <button style="padding: 0.3rem; color: white; margin-bottom: 3%; border: 1px solid black;"
+                        onclick="add_new_tag()"
+                        type="button"
+                        id="add_job-tag"
+                        class="form-control bg-secondary btn-sm"
+                >Добавить условие
+                </button>
+                <button style="padding: 0.3rem; color: white; border: 1px solid black;"
+                        onclick="delete_tags()"
+                        type="button"
+                        id="del_job-tag"
+                        class="form-control bg-secondary btn-sm"
+                >Очистить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    let tag_arr = []
+    "{% for tag in ind_tags %}";
+    tag_arr.push("{{tag.title}}");
+    "{% endfor %}";
+
+    const job_id ={'job_id': '{{ job_instance.id }}'}
+
+    let is = false;
+    let count = 0;
+    </script>
+    <script type="text/javascript" src="{% static 'industrial/js/ind_tags.js' %}"></script>
+    <div class="row">
+        <div class="col-md-6 col-xxl-4">
+            <div class="mb-3" style="text-align: center;">
+                <br>
+                <label for="pxp-company-job-description" class="form-label">Должностные
+                    обязанности <br> (чем нужно заниматься)</label>
+                <textarea
+                        style="overflow: scroll"
+                        class="form-control"
+                        id="pxp-company-job-description"
+                        placeholder="Любая попытка обмана или жалоба со стороны соискателей, правоохранительных органов, иных лиц, указавших на нарушение или несоответствие, будет влиять на статус заявки (снятие с публикации)"
+                        name="about_job"
+                        required
+                >{% if job_instance %}{{ job_instance.about_job }}{% endif %}</textarea>
+            </div>
+
+
+        </div>
+
+        <div class="col-md-6 col-xxl-4">
+            <div class="mb-3" style="text-align: center;">
+                <br>
+                <label for="pxp-company-job-description" class="form-label">Компания
+                    предлагает <br> (преференции, условия труда)</label>
+                <textarea
+                        style="overflow: scroll"
+                        class="form-control"
+                        id="pxp-company-job-description"
+                        placeholder="Условия должны соответствовать действительности, законодательным нормам, трудовому кодексу"
+                        name="company_offers"
+                        required
+                >{% if job_instance %}{{ job_instance.company_offers }}{% endif %}</textarea>
+            </div>
+        </div>
+        <div class="col-md-6 col-xxl-4">
+            <div class="mb-3" style="text-align: center;">
+                <br>
+                <label for="pxp-company-job-description" class="form-label">Требования к соискателю <br> (личностные качества)</label>
+                <textarea
+                        style="overflow: scroll"
+                        class="form-control"
+                        id="pxp-company-job-description"
+                        placeholder="Не размещайте дискриминационного текста в данном блоке по расовому, культурному и религиозному признаку."
+                        name="requirements"
+                        required
+                >{% if job_instance %}{{ job_instance.requirements }}{% endif %}</textarea>
+            </div>
+
+        </div>
+
+
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-xxl-6">
+            <div class="mb-3">
+                <label for="recruiter_name" class="form-label">Имя сотрудника для связи</label>
+                <input
+                    type="text"
+                    id="recruiter_name"
+                    class="form-control"
+                    placeholder="Допустим, Валерий"
+                    minlength="2"
+                    maxlength="30"
+                    pattern="^[A-Za-zА-Яа-яЁё][A-Za-zА-Яа-яЁё\s-]+$"
+                    title="Поле должно содержать и начинаться с символов русского или латинского алфавита, может включать в себя пробелы и знак дефиса"
+                    name="recruiter_name"
+                    required
+                    {% if job_instance %}
+                    value="{{ job_instance.recruiter_name }}"
+                    {% endif %}
+                >
+            </div>
+
+
+        </div>
+
+        <div class="col-md-6 col-xxl-6">
+            <div class="mb-3">
+                <div class="mb-3">
+                    <label for="recruiter_position" class="form-label">Должность</label>
+                    <input
+                        type="text"
+                        id="recruiter_position"
+                        class="form-control"
+                        placeholder="Например: менеджер отдела кадров"
+                        name="recruiter_position"
+                        pattern="^[A-Za-zА-Яа-яЁё][A-Za-zА-Яа-яЁё\s-]+$"
+                        title="Поле должно содержать и начинаться с символов русского или латинского алфавита, может включать в себя пробелы и знак дефиса"
+                        maxlength="30"
+                        minlength="2"
+                        required
+                        {% if job_instance %}
+                            value="{{ job_instance.recruiter_position }}"
+                        {% endif %}
+                    >
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xxl-3">
+            <div class="mb-3">
+                <div class="mb-3">
+                    <label for="recruiter_phone" class="form-label">Номер
+                        телефона </label>
+                    <input
+                            type="tel"
+                            id="recruiter_phone"
+                            class="form-control"
+                            placeholder="+7 (900) 000-00-00"
+                            name="recruiter_phone"
+                            required
+                            {% if job_instance %}
+                            value="{{ job_instance.recruiter_phone }}"
+                            {% endif %}
+                    >
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xxl-3">
+            <div class="mb-3">
+                <label for="pxp-company-job-type" class="form-label">Предпочитаемый
+                    способ связи</label>
+                <select id="pxp-company-job-type" class="form-select"
+                        name="recruiter_communication_method"
+                        required>
+
+                    {% for communication_method in communication_methods %}
+                    <option
+                            {% if job_instance %}
+                            {% if job_instance.recruiter_communication_method.id == communication_method.id %}
+                            selected=""
+                            {% endif %}
+                            {% endif %}
+                            value="{{ communication_method.id }}"
+                    >{{ communication_method.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+        <div class="col-md-6 col-xxl-3">
+            <div class="mb-3">
+                <label for="pxp-company-job-type" class="form-label">Адрес эл. почты</label>
+                <input
+                        type="text"
+                        id="recruiter_email"
+                        class="form-control"
+                        placeholder="any@any.ru"
+                        name="recruiter_email"
+                        pattern="[aA-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}"
+                        title="Допустимые символы: «-», «.», «0...9», «@», «A...Z», «_» и «a...z»."
+                        required
+                        {% if job_instance %}
+                        value="{{ job_instance.recruiter_email }}"
+                        {% endif %}
+                >
+            </div>
+
+        </div>
+        <div class="col-md-6 col-xxl-3">
+            <div class="mb-3">
+                <label for="pxp-company-job-type" class="form-label">Данные
+                    администратора</label>
+                <button
+                        type="button"
+                        id="pxp-company-job-location"
+                        class="form-control bg-secondary"
+                        onclick="document.getElementById('recruiter_email').value ='{{ user.industrial_worker.email }}';document.getElementById('recruiter_name').value ='{{ user.industrial_worker.name }}';document.getElementById('recruiter_position').value ='{{ user.industrial_worker.position }}';document.getElementById('recruiter_phone').value ='{{ user.industrial_worker.phone }}';"
+                ><b
+                        style="color: white">Использовать</b></button>
+            </div>
+
+        </div>
+
+
+    </div>
+    <div class="mt-4 mt-lg-5">
+        <button type="submit" class="btn rounded-pill pxp-section-cta" onclick="add_new_tag()">
+
+            {% if job_instance %}
+            Сохранить
+            {% else %}
+            Опубликовать
+            {% endif %}
+
+        </button>
+
+    </div>
+</form>
+
+
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'industrial/base.html' %}
+
+{% block page_content %}
+
+    <h1>Отклики</h1>
+    <p class="pxp-text-light">Отклики на все заявки будут формироваться в таблице-реестре ниже</p>
+
+{#    <div class="mt-4 mt-lg-5">#}
+{#        <div class="row justify-content-between align-content-center">#}
+{#            <div class="col-auto order-2 order-sm-1">#}
+{#                <div class="pxp-company-dashboard-jobs-bulk-actions mb-3">#}
+{#                    <select class="form-select">#}
+{#                        <option value="none" hidden="">Показать все</option>#}
+{#                        <option>На модерации</option>#}
+{#                        <option>Опубликованные</option>#}
+{#                        <option>Заблокированные</option>#}
+{#                    </select>#}
+{#                    <button class="btn ms-2">Применить</button>#}
+{#                </div>#}
+{#            </div>#}
+            <div class="col-auto order-1 order-sm-2">
+                <div class="pxp-company-dashboard-jobs-search mb-3">
+                    <div class="pxp-company-dashboard-jobs-search-results me-3">{{ responses_count }} Отклика</div>
+                    <div class="pxp-company-dashboard-jobs-search-search-form">
+                        <div class="input-group">
+                            <span class="input-group-text"><span class="fa fa-search"></span></span>
+                            <input class="form-control" type="text" id="myInput1" onkeyup="name_filter()" placeholder="Поиск по вакансии...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+{#        </div>#}
+        <div class="table-responsive">
+            <table id="my_table" class="table table-hover align-middle">
+
+                <thead>
+                <tr>
+                    <th style="width: 6%;">id</th>
+                    <th style="width: 25%;">Вакансия</th>
+                    <th style="width: 20%;">Имя кандидата</th>
+                    <th style="width: 14%;">Номер телефона</th>
+                    <th style="width: 10%;">Способ связи</th>
+                    <th>Дата и время отклика</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for response in responses_list %}
+                    <tr>
+                        <td>
+                            <a href="#" class="pxp-company-dashboard-job-applications">#000{{ response.id }}</a>
+                        </td>
+
+                        <td>
+                            <a href="{% url "industrial:view_job" job_id=response.job.id %}">
+                                <div class="pxp-company-dashboard-job-title">
+                                    {{ response.job.title }}{% if response.job.qualification %}} {{ response.job.qualification }}{% endif %}
+                                </div>
+                                <div class="pxp-company-dashboard-job-location"><span
+                                        class="fa fa-globe me-1"></span>
+                                    {{ response.job.location.city }}
+                                </div>
+                            </a>
+                        </td>
+                        <td>
+                            <div class="pxp-company-dashboard-job-category">
+                                {{ response.name }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pxp-company-dashboard-job-status"><span
+                                    class="badge rounded-pill bg-success">
+                                    {{ response.phone }}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pxp-company-dashboard-job-status">
+                                {{ response.communication_method.title }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pxp-company-dashboard-job-date">{{ response.created_at|date:"d-m-y H:i"}}</div>
+                        </td>
+                        <td>
+                            <div class="pxp-dashboard-table-options">
+                                <ul class="list-unstyled">
+
+                                    <li>
+{#                                        <button href="tel:{{ response.phone }}" title="Reject" class="bg-warning"><span class="fa fa-phone "></span>#}
+{#                                        </button>#}
+                                        <button onclick="location.href='TEL:{{ response.phone }}';"> <span class="fa fa-phone "></span></button>
+
+{#                                        <a href="tel:+79012345678"> <span class="fa fa-phone "></span> </a>#}
+                                    </li>
+                                    <li>
+                                        <form method="get" action="{% url "industrial:delete_resp" resp_id=response.id%}">
+                                            <button type="submit" title="Delete" class="bg-warning">
+                                                <span class="fa fa-trash-o"></span>
+
+                                            </button>
+                                        </form>
+
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<script>
+    function name_filter() {
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("myInput1");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("my_table");
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+</script>
+{% endblock %}

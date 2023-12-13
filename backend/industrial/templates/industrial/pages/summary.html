@@ -1,0 +1,18 @@
+{% extends 'industrial/baseapp.html' %}
+{% load static %}
+{% load industrial_tags %}
+
+{% block page_title %}Личный кабинет{% endblock %}
+
+{% block page_content %}
+
+<div class="pxp-dashboard-content-details">
+<h1>Ваше резюме!</h1>
+<p class="pxp-text-light">Платформа Jobox.ru - инструмент для размещения Ваших резюме.</p>
+
+</div>
+
+
+<script src="{% static 'industrial/js/summary.js' %}"></script>
+
+{% endblock %}

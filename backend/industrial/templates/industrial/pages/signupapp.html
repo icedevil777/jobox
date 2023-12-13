@@ -1,0 +1,182 @@
+{% extends 'bulletin_board/base.html' %}
+{% load static %}
+
+{% block page_content %}
+    <section class="pxp-hero vh-100" style="background-color: var(--pxpMainColorLight);">
+        <div class="row align-items-center pxp-sign-hero-container">
+
+            <div class="col-xl-6 pxp-column">
+                <div class="pxp-sign-hero-fig text-center pb-100 pt-100">
+                    <img src="{% static 'industrial/images/signup-big-fig.png' %}" alt="Sign up">
+                    <h1 class="mt-4 mt-lg-5">Добро пожаловать</h1>
+                </div>
+            </div>
+
+            <div class="col-xl-6 pxp-column pxp-is-light">
+                <div class="pxp-sign-hero-form pb-100 pt-100">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6 col-xl-7 col-xxl-5">
+                            <div class="pxp-sign-hero-form-content">
+
+
+                                <h5 class="text-center">Создать аккаунт</h5>
+
+                                {% if errors.applicant_already_registered %}
+                                    <h5 class="text-center text-danger">Пользователь уже зарегистрирован!</h5>
+                                {% endif %}
+
+                                {% if errors.tel_already_registered %}
+                                    <h5 class="text-center text-danger">Телефон уже используется!</h5>
+                                {% endif %}
+
+                                {% if errors.sing_up_error %}
+                                    <h5 class="text-center text-danger ">Ошибка регистрации!</h5>
+                                    <br>
+                                {% endif %}
+
+
+                                <form class="mt-4" method="post" id="signupapp-form"
+{#                                      action="{% url 'industrial:sign_up_app' %}"#}
+                                >
+                                    {% csrf_token %}
+
+                                    <div class="form-floating mb-3 form__validation">
+                                        <input
+                                                type="tel"
+                                                class="form-control"
+                                                id="pxp-admin-phone"
+                                                placeholder="Телефон"
+                                                name="tel"
+                                                {% if rd %}
+                                                value="{{ rd.tel }}"
+                                                {% endif %}
+                                        >
+                                        <label for="pxp-admin-phone">Мобильный телефон</label>
+                                        <span class="fa fa-phone"></span>
+<!--                                        <div class="form__requirements form__requirements&#45;&#45;email">-->
+<!--                                            не правильный номер-->
+<!--                                        </div>-->
+                                    </div>
+                                    <div class="form-floating mb-3 form__validation">
+                                        <input
+                                                type="email"
+                                                class="form-control input__requirements"
+                                                id="pxp-signup-email"
+                                                placeholder="Email address"
+                                                name="email"
+                                                {% if rd %}
+                                                value="{{ rd.email }}"
+                                                {% endif %}
+                                                pattern="[aA-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}"
+                                                title="Допустимые символы: «-», «.», «0...9», «@», «A...Z», «_» и «a...z»."
+                                        >
+                                        <label for="pxp-signup-email">Введите e-mail</label>
+                                        <span class="fa fa-envelope-o"></span>
+                                        <div class="form__requirements">
+                                            Неверный формат почты
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3 form__validation">
+                                        <input
+                                            type="password"
+                                            class="form-control input__requirements new-password-js"
+                                            id="pxp-signup-password"
+                                            placeholder="Create password"
+                                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                            title="Пароль должен содержать не менее одной цифры и одной прописной и строчной буквы, а также не менее 8 символов."
+                                            name="password"
+                                            maxlength="20"
+                                        >
+                                        <label for="pxp-signup-password">Придумайте пароль</label>
+                                        <span class="fa fa-lock"></span>
+                                        <div class="form__requirements">
+                                            Не надежный пароль
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3 form__validation input__requirements">
+                                        <input
+                                                type="password"
+                                                class="form-control verify-password-js"
+                                                id="pxp-signup-password-repeat"
+                                                placeholder="Create password"
+                                                name="password_repeat"
+                                                maxlength="20"
+                                        >
+                                        <label for="pxp-signup-password-repeat">Повторите пароль</label>
+                                        <span class="fa fa-lock"></span>
+                                        <div class="form__requirements--not-match">
+                                            Пароли не совпадают
+                                        </div>
+                                    </div>
+                                    <div class="text-center" style="margin-bottom: 5%;">
+                                        <a href="#" class="password-control" onclick="return show_hide_password(this);">Показать/Скрыть пароли</a><br>
+                                    </div>
+                                    <div class="pxp-single-job-company-location">
+                                        <input
+                                                type="checkbox"
+                                                class="form-check-input"
+                                                name="agree_with_agreement"
+                                                id="agree_with_agreement_checkbox"
+                                        >
+                                        С
+                                        <a
+                                                href="{% url 'bulletin_board:doc_1' %}"
+                                                class="pxp-single-job-company"
+                                        >правилами
+                                            пользования сайта</a> согласен
+                                    </div>
+                                    <br>
+                                    <button
+                                            href="submit"
+{#                                            class="btn rounded-pill pxp-section-cta d-block w-100"#}
+                                            class="btn rounded-pill pxp-sign-hero-form-cta w-100"
+                                            id="signup-submit-button"
+{#                                            type="button"#}
+                                            disabled=""
+                                    >
+                                        Регистрация
+                                    </button>
+
+                                    <div class="mt-4 text-center pxp-sign-hero-form-small">
+                                        У Вас уже есть аккаунт? <a href="{% url "industrial:sign_in_app" %}">Вход</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<script src="{% static 'industrial/js/show_pass.js' %}"></script>
+<script src="{% static 'industrial/js/test.js' %}"></script>
+    <script>
+        function ValidateEmail(mail) {
+            return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{1,50})+$/.test(mail);
+        }
+
+        async function on_form_submit() {
+
+            const tel = document.getElementById("pxp-admin-phone").value
+            const email = document.getElementById("pxp-signup-email").value
+            const password = document.getElementById("pxp-signup-password").value
+            const password_repeat = document.getElementById("pxp-signup-password-repeat").value
+
+
+            if (ValidateEmail(email) && password === password_repeat && password.length >= 8){
+                document.getElementById("signupapp-form").submit()
+                }
+        }
+
+        function on_agreement_checked(event) {
+            document.getElementById('signup-submit-button').disabled = !event.target.checked
+        }
+
+        document.getElementById('signup-submit-button').onclick = on_form_submit
+        document.getElementById('agree_with_agreement_checkbox').onchange = on_agreement_checked
+
+    </script>
+
+
+
+{% endblock %}

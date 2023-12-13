@@ -1,0 +1,457 @@
+{% load static %}
+{% load bulletin_board_tags %}
+{% load core_tags %}
+{% load cache %}
+
+<!doctype html>
+<html lang="en" class="pxp-root">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block page_meta %}
+        {% page_custom_metas request %}
+    {% endblock %}
+
+
+
+
+    <link rel="shortcut icon" href=" {% static 'industrial/images/favicon.png' %}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'industrial/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'industrial/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/form-validation.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+
+
+    <title>{% block page_title %}Jobox{% endblock %}</title>
+
+    {% inside_head %}
+</head>
+
+<body>
+
+<div class="pxp-preloader"><span>Загрузка...</span></div>
+
+
+<header class="pxp-header fixed-top pxp-no-bg">
+    <div class="pxp-container">
+        <div class="pxp-header-container">
+            <div class="pxp-logo-nav-container">
+                <div class="pxp-logo">
+                    <a href="{% url 'bulletin_board:index' %}" class="pxp-animate">
+                        {# <span style="color: var(--pxpMainColor)">job</span>ny.ru#}
+                        <img src="{% system_image_logo_big_url %}" style="height: 40px; width: 100px;"
+                             alt="Jobox"/>
+                    </a>
+                </div>
+                <div class="pxp-nav-trigger navbar d-xl-none flex-fill">
+                    <a role="button" data-bs-toggle="offcanvas" data-bs-target="#pxpMobileNav"
+                       aria-controls="pxpMobileNav">
+                        <div class="pxp-line-1"></div>
+                        <div class="pxp-line-2"></div>
+                        <div class="pxp-line-3"></div>
+                    </a>
+                    <div class="offcanvas offcanvas-start pxp-nav-mobile-container" tabindex="-1" id="pxpMobileNav">
+                        <div class="offcanvas-header">
+                            <div class="pxp-logo">
+                                <a href="{% url 'bulletin_board:index' %}" class="pxp-animate">
+                                    <img src="{% system_image_logo_big_url %}" style="height: 40px; width: 100px;"
+                                         alt="Jobox"/></a>
+                            </div>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <nav class="pxp-nav-mobile">
+                                <ul class="navbar-nav justify-content-end flex-grow-1">
+
+                                    <li class="nav-item dropdown">
+                                        <a href="{% url 'bulletin_board:index' %}" role="button"
+                                           class="nav-link">Главная</a>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a href="{% url 'bulletin_board:jobs_catalog' %}" role="button"
+                                           class="nav-link">
+                                            Вакансии
+                                        </a>
+
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a href="{% url "bulletin_board:companies_list" %}" role="button"
+                                           class="nav-link">Компании</a>
+                                    </li>
+
+                                    <li class="nav-item dropdown">
+                                        <a href="{% url 'bulletin_board:sum_catalog' %}" role="button"
+                                           class="nav-link">Резюме</a>
+                                    </li>
+
+                                    <li class="nav-item dropdown">
+                                        <a href="{% url "bulletin_board:blog_list" %}" role="button"
+                                           class="nav-link">Новости</a>
+
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a href="{% url "bulletin_board:for_company" %}" role="button"
+                                           class="nav-link">Работодателям </a>
+
+                                    </li>
+
+                                    {% if user.is_authenticated %}
+                                        <nav class="pxp-user-nav pxp-on-light">
+                                            <a href="{% url 'industrial:add_new_job' %}"
+                                               class="btn rounded-pill pxp-nav-btn">Разместить вакансию</a>
+
+                                            <div class="dropdown pxp-user-nav-dropdown">
+                                                <a role="button" class="dropdown-toggle" data-bs-toggle="dropdown">
+                                                    <div class="pxp-user-nav-avatar pxp-cover"
+                                                            {% if request.user.industrial_worker.company.brand_logo %}
+                                                         style="background-image: url({{ request.user.industrial_worker.company.brand_logo.url }});"
+                                                            {% else %}
+                                                         style="background-image: url({% system_image_company_default_logo_url %});"
+                                                            {% endif %}></div>
+                                                    <!--                                                    <div class="pxp-user-nav-name d-none d-md-block"> {{ user.industrial_worker.company.name }} </div>-->
+                                                    <div class="pxp-user-nav-name d-none d-md-block">
+                                                        <h5>Личный кабинет</h5>
+                                                    </div>
+                                                </a>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li><a class="pxp-user-nav-name d-none d-md-block">{{
+                                                            user.industrial_worker.company.name }}</a></li>
+                                                    <li><a class="dropdown-item"
+                                                           href="{% url 'industrial:dashboard' %}">Главная</a></li>
+                                                    <li><a class="dropdown-item"
+                                                           href="{% url 'industrial:profile' %}">Профиль</a>
+                                                    </li>
+                                                    <li><a class="dropdown-item"
+                                                           href="{% url 'industrial:logout' %}">Выход</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </nav>
+                                    {% else %}
+                                        <nav class=" pxp-on-light">
+                                            <a href="{% url 'industrial:sign_in' %}"
+                                               class="btn rounded-pill pxp-nav-btn text-white">
+                                                Разместить вакансию
+                                            </a>
+
+                                        </nav>
+                                    {% endif %}
+
+
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="pxp-nav dropdown-hover-all d-none d-xl-block">
+                    <ul>
+
+                        <li class="dropdown">
+                            <a href="{% url 'bulletin_board:jobs_catalog' %}" class="dropdown-toggle">
+                                Вакансии
+                            </a>
+
+                        </li>
+                        <li class="dropdown">
+                            <a href="{% url 'bulletin_board:companies_list' %}" class="dropdown-toggle">Компании</a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="{% url 'bulletin_board:sum_catalog' %}" class="dropdown-toggle">
+                                Резюме
+                            </a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="{% url 'bulletin_board:blog_list' %}" class="dropdown-toggle">Новости</a>
+
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle"
+                               href="{% url 'bulletin_board:for_company' %}">Работодателям</a>
+
+                        </li>
+
+
+                    </ul>
+                </nav>
+            </div>
+
+        {% if not user.is_authenticated %}
+            <div class="pxp-on-light-mobile dropdown">
+                <bottom class="btn dropdown-toggle" type="button" id="dropdownMenu3" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="btn rounded-pill pxp-nav-btn">Разместить </a>
+                </bottom>
+                <ul class="dropdown-menu dropdown-menu-lg-end bg-transparent border border-0" aria-labelledby="dropdownMenu3">
+                    <li style="margin-bottom: 5px">
+                        <button class="btn dropdown-item-active btn-primary w-100 rounded-pill" type="button">
+                            <a class="btn dropdown-item-active btn-primary w-100 rounded-pill" href="{% url 'industrial:sign_in_app' %}">Резюме</a>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="btn dropdown-item-active btn-primary w-100 rounded-pill" type="button">
+                            <a class="btn dropdown-item-active btn-primary w-100 rounded-pill" href="{% url 'industrial:sign_in' %}">Вакансию</a>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        {% else %}
+            <div class="pxp-on-light-mobile dropdown">
+                <bottom class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="btn rounded-pill pxp-nav-btn">Личный кабинет</a>
+                </bottom>
+                <ul class="dropdown-menu dropdown-menu-lg-end bg-transparent border border-0" aria-labelledby="dropdownMenu2">
+                    {% if user.user_type == 'INT' %}
+                        <li style="margin-bottom: 5px;">
+                            <button
+                                    class="btn dropdown-item-active btn-primary w-100 rounded-pill" type="button"><a
+                                    class="btn dropdown-item-active btn-primary w-100 rounded-pill"
+                                    href="{% url 'industrial:dashboard' %}">Вход</a></button>
+                        </li>
+                    {% elif user.user_type == 'APPLICANT' %}
+                        <li style="margin-bottom: 5px;">
+                            <button
+                                    class="btn dropdown-item-active btn-primary w-100 rounded-pill" type="button"><a
+                                    class="btn dropdown-item-active btn-primary w-100 rounded-pill"
+                                    href="{% url 'industrial:dashboardapp' %}">Вход</a></button>
+                        </li>
+                    {% else %}
+                        <li style="margin-bottom: 5px;">
+                            <button
+                                    class="btn dropdown-item-active btn-primary w-100 rounded-pill" type="button"><a
+                                    class="btn dropdown-item-active btn-primary w-100 rounded-pill"
+                                    href="{% url 'admin:index' %}">Админка</a></button>
+                        </li>
+                    {% endif %}
+                    <li>
+                        <button class="btn dropdown-item-active btn-primary w-100 rounded-pill" type="button"><a
+                                class="btn dropdown-item-active btn-primary w-100 rounded-pill"
+                                href="{% url 'industrial:logout' %}">Выход</a></button>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+        </div>
+    </div>
+</header>
+
+{% block page_content %}
+
+{% endblock %}
+
+
+<!--<footer class="pxp-main-footer mt-100">-->
+<footer class="pxp-main-footer mt-100 d-none d-sm-block">
+    <div class="pxp-main-footer-top pt-100 pb-100" style="background-color: var(--pxpMainColorLight);">
+        <div class="pxp-container">
+            <div class="row">
+                <div class="col-lg-6 col-xl-5 col-xxl-4 mb-4">
+                    <div class="pxp-footer-logo">
+                        <a href="{% url 'bulletin_board:index' %}" class="pxp-animate">
+                            {# <span style="color: var(--pxpMainColor)">job</span>ny.ru#}
+                            <img src="{% system_image_logo_big_url %}" style="height: 40px; width: 100px;"
+                                 alt="Jobox"/>
+                        </a>
+                    </div>
+                    <div class="pxp-footer-section mt-3 mt-md-4">
+                        Звонок по РФ бесплатный<br>
+
+                        <a href="tel:88007003321" class="pxp-footer-phone"> 8 800 700 33 21</a>
+                    </div>
+                    <div class="mt-3 mt-md-4 pxp-footer-section">
+
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-7 col-xxl-8">
+                    <div class="row">
+                        <div class="col-md-6 col-xl-4 col-xxl-3 mb-4">
+                            <div class="pxp-footer-section">
+                                <h3>ООО "РостДжоб"</h3>
+                                <ul class="pxp-footer-list">
+                                    <li>ИНН 16545586564</li>
+                                    <li>ОГРН 2435345454</li>
+                                    <li>КПП 354346457768</li>
+
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-4 col-xxl-3 mb-4">
+                            <div class="pxp-footer-section">
+                                <h3>Юр. адрес</h3>
+                                <div class="pxp-footer-text">
+                                    Ул. Рубаненко 4, 360,<br>
+                                    г. Набережные Челны,<br>
+                                    Республика Татарстан
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-4 col-xxl-3 mb-4">
+                            <div class="pxp-footer-section">
+                                <h3>Карта сайта</h3>
+                                <ul class="pxp-footer-list">
+                                    <li><a href="{% url "bulletin_board:index" %}">Главная</a></li>
+                                    <li><a href="{% url "bulletin_board:jobs_catalog" %}">Вакансии</a></li>
+                                    <li><a href="{% url "bulletin_board:companies_list" %}">Компании</a></li>
+                                    <li><a href="{% url "bulletin_board:blog_list" %}">Блог</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-4 col-xxl-3 mb-4">
+                            <div class="pxp-footer-section">
+                                <h3>Документы</h3>
+                                <ul class="pxp-footer-list">
+                                    <li>
+                                        <a href="{% url "bulletin_board:doc_1" %}">Пользовательское
+                                            <br>соглашение</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url "bulletin_board:doc_2" %}">Защита персональных
+                                            <br>данных</a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pxp-main-footer-bottom" style="background-color: black; color: white">
+        <div class="pxp-container">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-lg-auto">
+                    <div class="pxp-footer-copyright pxp-text-light">© 2022 Jobox.ru Все права защищены.</div>
+                </div>
+                <div class="col-lg-auto">
+                    {% social_links_v1 %}
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="modal fade pxp-user-modal" id="pxp-signin-modal" aria-hidden="true" aria-labelledby="signinModal"
+     tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                {#
+                <link rel="shortcut icon" href=" {% static 'industrial/images/favicon.png' %}" type="image/x-icon">
+                #}
+
+                <div class="pxp-user-modal-fig text-center">
+                    <link href="{% static 'industrial/images/signin-fig.png' %}" type="png">
+                    {# <img src="{% static 'industrial/images/signin-fig.png' %}" alt="Sign in">#}
+                </div>
+                <h5 class="modal-title text-center mt-4" id="signinModal">С возвращением!</h5>
+                <form class="mt-4">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="pxp-signin-email" placeholder="Email address">
+                        <label for="pxp-signin-email">Номер телефона</label>
+                        <span class="fa fa-envelope-o"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="pxp-signin-password" placeholder="Password">
+                        <label for="pxp-signin-password">Пароль</label>
+                        <span class="fa fa-lock"></span>
+                    </div>
+                    <a href="#" class="btn rounded-pill pxp-modal-cta">Продолжить</a>
+                    <div class="mt-4 text-center pxp-modal-small">
+                        <a href="#" class="pxp-modal-link">Запомнить меня</a>
+                    </div>
+                    <div class="mt-4 text-center pxp-modal-small">
+                        Еще нет аккаунта? <a role="button" class="" data-bs-target="#pxp-signup-modal"
+                                             data-bs-toggle="modal" data-bs-dismiss="modal">Зарегистрироваться</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade pxp-user-modal" id="pxp-signup-modal" aria-hidden="true" aria-labelledby="signupModal"
+     tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pxp-user-modal-fig text-center">
+                    <img src="{% static 'industrial/images/signup-fig.png' %}" alt="Sign up">
+                </div>
+                <h5 class="modal-title text-center mt-4" id="signupModal">Создать аккаунт</h5>
+                <form class="mt-4">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="pxp-signup-email" placeholder="Email address">
+                        <label for="pxp-signup-email">Номер телефона</label>
+                        <span class="fa fa-envelope-o"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="pxp-signup-password"
+                               placeholder="Create password">
+                        <label for="pxp-signup-password">Придумайте пароль</label>
+                        <span class="fa fa-lock"></span>
+                    </div>
+                    <a href="#" class="btn rounded-pill pxp-modal-cta">Зарегистрироваться</a>
+                    <div class="mt-4 text-center pxp-modal-small">
+                        Уже есть аккаунт? <a role="button" class="" data-bs-target="#pxp-signin-modal"
+                                             data-bs-toggle="modal">Войти</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script defer src="{% static 'industrial/js/jquery-3.4.1.min.js' %}"></script>
+<script defer src="{% static 'industrial/js/jquery.mask.min.js' %}"></script>
+<script defer src="{% static 'industrial/js/bootstrap.bundle.min.js' %}"></script>
+<script defer src="{% static 'industrial/js/owl.carousel.min.js' %}"></script>
+<script defer src="{% static 'industrial/js/nav.js' %}"></script>
+<script defer src="{% static 'industrial/js/main.js' %}"></script>
+
+<script defer src="{% static 'industrial/js/jquery.maskedinput.min.js' %}"></script>
+<script defer src="{% static 'industrial/js/mask.js' %}"></script>
+
+<script defer src="{% static 'industrial/js/chosen.jquery.min.js' %}"></script>
+<script defer src="{% static 'industrial/js/prism.js' %}"></script>
+<script defer src="{% static 'industrial/js/init.js' %}"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script defer src="{% static 'industrial/js/init_style.js' %}"></script>
+
+
+<style>
+    span.select2-selection--single {
+        border: none !important;
+    }
+</style>
+
+{#{% cache 3600 bulletin_board_base_yandex_metric_cache %}#}
+{# {% yandex_metric %}#}
+{#{% endcache %}#}
+
+{% inside_body %}
+</body>
+
+</html>

@@ -1,0 +1,347 @@
+{% extends 'bulletin_board/base.html' %}
+{% load static %}
+{% load core_tags %}
+
+{% block page_title %}
+    Каталог вакансий
+{% endblock %}
+
+
+{% block page_content %}
+
+
+    <section class="pxp-page-header-simple">
+        <div class="pxp-container">
+            <h1>Каталог вакансий</h1>
+            <div class="pxp-hero-subtitle pxp-text-light">Только актуальные вакансии от проверенных работодателей</div>
+
+            <div class="pxp-hero-form pxp-hero-form-round pxp-large pxp-has-border mt-3 mt-lg-4">
+                <form class="row gx-3 align-items-center" method="get" id="search_form">
+
+                    <span style="display: none;">
+
+                        <input type="text" name="page" id="pagination_current_page" value="{{ fs.page }}">
+
+                        <input
+                                name="sort_by"
+                                id="sort_by_input"
+                                type="hidden"
+                                value="{% if js.sort_by %}{{ fs.sort_by }}{% endif %}"
+                        >
+                    {{ fs.keys }}
+
+                    {# Тип занчтия #}
+                        {% for employment_type in employment_types %}
+                            <input
+                                    class="form-check-input me-2"
+                                    type="checkbox"
+                                    name="{{ employment_type.name_for_form }}"
+                                    id="{{ employment_type.name_for_form }}"
+                                    {% if employment_type.name_for_form in fs.keys %}
+                                    checked=""
+                                    {% endif %}
+                            >
+                        {% endfor %}
+
+                        {# Опыт работы  #}
+                        {% for experience in experiences %}
+                            <input
+                                    class="form-check-input me-2"
+                                    type="checkbox"
+                                    name="{{ experience.name_for_form }}"
+                                    id="{{ experience.name_for_form }}"
+                                    {% if experience.name_for_form in fs.keys %}
+                                    checked=""
+                                    {% endif %}
+                            >
+                        {% endfor %}
+                    </span>
+
+
+                    <div class="col-12 col-lg">
+                        <div class="input-group mb-3 mb-lg-0">
+                            <span class="input-group-text"><span class="fa fa-search"></span></span>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Кем хотите работать?"
+                                    name="title"
+                                    {% if fs.title %}
+                                    value="{{ fs.title }}"
+                                    {% endif %}
+                            >
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg pxp-has-left-border">
+                        <div class="input-group mb-3 mb-lg-0">
+                            <span class="input-group-text"><span class="fa fa-globe"></span></span>
+                            <select class="form-select select2-jobs-catalog-location" name="location">
+                                <option value="">Искать везде</option>
+                                {% for location in locations %}
+                                    <option
+                                            value="{{ location.id }}"
+                                            {% if fs.location %}
+                                                {% if location.id == fs.location|add:"0" %}
+                                            selected=""
+                                                {% endif %}
+                                            {% endif %}
+                                    >{{ location.city }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg pxp-has-left-border">
+                        <div class="input-group mb-3 mb-lg-0">
+                            <span class="input-group-text"><span class="fa fa-folder-o"></span></span>
+                            <select class="form-select" name="category">
+                                <option value="">Категория</option>
+                                {% for category in categories %}
+                                    <option
+                                            {% if fs.category %}
+                                                {% if fs.category|add:"0" == category.id %}
+                                                    selected=""
+                                                {% endif %}
+                                            {% endif %}
+                                                    value="{{ category.id }}"
+                                    >{{ category.title }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-auto">
+                        <button
+                                type="button"
+                                onclick="document.getElementById('pagination_current_page').value=1;document.getElementById('search_form').submit()"
+                        >
+                            Найти работу
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="mt-10">
+        <div class="pxp-container">
+            <div class="row">
+                <div class="col-lg-5 col-xl-4 col-xxl-3">
+                    <div class="pxp-jobs-list-side-filter">
+                        <div class="pxp-list-side-filter-header d-flex d-lg-none">
+                            <div class="pxp-list-side-filter-header-label">Фильтры</div>
+                            <a role="button"><span class="fa fa-sliders"></span></a>
+                        </div>
+                        <div class="mt-4 mt-lg-0 d-lg-block pxp-list-side-filter-panel">
+                            <h3>Тип занятости</h3>
+                            <div class="list-group mt-2 mt-lg-3">
+
+                                {% for employment_type in employment_types %}
+                                    <label class="list-group-item d-flex justify-content-between align-items-center mt-2 mt-lg-3">
+                                        <span class="d-flex">
+                                            <input
+                                                    class="form-check-input me-2"
+                                                    type="checkbox"
+                                                    value="{{ employment_type.name_for_form }}"
+                                                    onchange="document.getElementById(this.value).checked = this.checked"
+                                                    {% if employment_type.name_for_form in fs.keys %}
+                                                    checked=""
+                                                    {% endif %}
+                                            >
+                                            {{ employment_type.title }}
+                                        </span>
+                                        {#                                        <span class="badge rounded-pill">34</span>#}
+                                    </label>
+                                {% endfor %}
+
+
+                            </div>
+
+                            <h3 class="mt-3 mt-lg-4">Опыт работы</h3>
+                            <div class="list-group mt-2 mt-lg-3">
+
+                                {% for experience in experiences %}
+                                    <label class="list-group-item d-flex justify-content-between align-items-center mt-2 mt-lg-3">
+                                        <span class="d-flex">
+                                            <input
+                                                    class="form-check-input me-2"
+                                                    type="checkbox"
+                                                    value="{{ experience.name_for_form }}"
+                                                    onchange="document.getElementById(this.value).checked = this.checked"
+                                                    {% if experience.name_for_form in fs.keys %}
+                                                    checked=""
+                                                    {% endif %}
+                                            >
+                                            {{ experience.title }}
+                                        </span>
+                                        {#                                        <span class="badge rounded-pill">44</span>#}
+                                    </label>
+                                {% endfor %}
+
+
+                            </div>
+
+                            {#                            <h3 class="mt-3 mt-lg-4">Зарплата</h3>#}
+                            {#                            <div class="list-group mt-2 mt-lg-3">#}
+                            {#                                <label class="list-group-item d-flex justify-content-between align-items-center pxp-checked">#}
+                            {#                                        <span class="d-flex">#}
+                            {#                                            <input class="form-check-input me-2" type="checkbox" value="" checked="">#}
+                            {#                                            Ползунок добавить бы#}
+                            {#                                        </span>#}
+                            {#                                    <span class="badge rounded-pill">34</span>#}
+                            {#                                </label>#}
+                            {##}
+                            {#                            </div>#}
+
+                            <br>
+                            <button
+                                    href="companies-list-1.html"
+                                    class="btn rounded-pill pxp-section-cta"
+                                    {#                                    onclick="console.log(document.getElementById('pagination_current_page'))"#}
+                                    onclick="document.getElementById('pagination_current_page').value=1;document.getElementById('search_form').submit()"
+                            >
+                                Применить
+                                <span class="fa fa-angle-right"></span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-xl-8 col-xxl-9">
+                    <div class="pxp-jobs-list-top mt-4 mt-lg-0">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-auto">
+                                <h2>
+                                    <span class="pxp-text-light">Найдено</span>
+                                    {{ jobs_count }}
+                                    <span class="pxp-text-light">вакансий</span>
+                                </h2>
+                            </div>
+                            <div class="col-auto">
+
+                                <select class="form-select" name="sort_by"
+                                        onchange="document.getElementById('sort_by_input').value =this.value;document.getElementById('search_form').submit()">
+                                    <option value="" selected="">Сортировка</option>
+                                    <option value="first_new">Сначала новые</option>
+                                    <option value="first_old">Сначала старые</option>
+                                    <option value="salary">По зарплате</option>
+
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        {% for job in jobs %}
+                            <div class="pxp-jobs-card-3 pxp-has-border">
+                                <div class="row align-items-center justify-content-between">
+                                    <div class="col-sm-3 col-md-2 col-lg-3 col-xl-2 col-xxl-auto">
+                                        <a
+                                                href="{% url "bulletin_board:job_view" job_id=job.id %}"
+                                                class="pxp-jobs-card-3-company-logo"
+                                                {% if job.company.brand_logo %}
+                                                style="background-image: url({{ job.company.brand_logo.url }});"
+                                                {% else %}
+                                                style="background-image: url({% system_image_company_default_logo_url %});"
+                                                {% endif %}
+                                        >
+
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-9 col-md-10 col-lg-9 col-xl-10 col-xxl-4">
+                                        <a
+                                                href="{% url "bulletin_board:job_view" job_id=job.id %}"
+                                                class="pxp-jobs-card-3-title mt-3 mt-sm-0"
+                                        >
+                                            {{ job.title }} {% if job_instance.qualification != None %}&nbsp;
+                                            {{ job.qualification }}{% endif %}</a>
+                                        <div class="pxp-jobs-card-3-details">
+                                            <a
+                                                    href="{% url "bulletin_board:jobs_catalog" %}?location={{ job.location.id }}"
+                                                    class="pxp-jobs-card-3-location"
+                                            >
+                                                <span class="fa fa-globe"></span>
+                                                {{ job.location.city }}
+                                            </a>
+                                            <div class="pxp-jobs-card-3-type">График: {{ job.work_schedule }}</div>
+                                        </div>
+                                        <div class="pxp-jobs-card-3-details">
+                                            <a href="" class="pxp-jobs-card-1-location">
+                                                <span class="fa fa-money"></span>{{ job.salary }} руб.
+                                            </a>
+                                            <div class="pxp-jobs-card-1-type">{{ job.salary_condition.title }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8 col-xl-6 col-xxl-4 mt-3 mt-xxl-0">
+                                        <a
+                                                href="{% url "bulletin_board:jobs_catalog" %}?category={{ job.category.id }}"
+                                                class="pxp-jobs-card-3-category"
+                                        >
+                                            <div class="pxp-jobs-card-3-category-label">
+                                                {{ job.category.title }}
+                                            </div>
+                                        </a>
+                                        <div class="pxp-jobs-card-3-date-company">
+                                            <span class="pxp-jobs-card-3-date pxp-text-light">
+                                                от {{ job.published_at_simple }}
+                                            </span>
+                                            <a
+                                                    href="{% url "bulletin_board:company_view" company_id=job.company.id %}"
+                                                    class="pxp-jobs-card-3-company"
+                                            >
+                                                {{ job.company.name }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 col-xl-3 col-xxl-auto mt-3 mt-xxl-0 pxp-text-right">
+                                        <a
+                                                href="{% url 'bulletin_board:job_view' job_id=job.id %}"
+                                                class="btn rounded-pill pxp-card-btn"
+                                        >
+                                            Подробнее
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="row mt-4 mt-lg-5 justify-content-between align-items-center">
+                        <div class="col-auto">
+
+                            <nav class="mt-3 mt-sm-0" aria-label="Jobs list pagination">
+                                <ul class="pagination pxp-pagination">
+                                    {% for pagination_page in fs.pagination_range %}
+                                        {% if pagination_page > 0 %}
+                                            <li
+                                                    class="page-item {% if pagination_page == fs.page %}active{% endif %}"
+                                                    aria-current="page"
+                                                    onclick="document.getElementById('pagination_current_page').value={{ pagination_page }};document.getElementById('search_form').submit()"
+                                            >
+                                                <span class="page-link">{{ pagination_page }}</span>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+
+                                </ul>
+                            </nav>
+
+                        </div>
+                        <div class="col-auto">
+
+                            <!--a href="#" class="btn rounded-pill pxp-section-cta mt-3 mt-sm-0">
+                                Показать больше вакансий
+                                <span class="fa fa-angle-right"></span>
+                            </a-->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

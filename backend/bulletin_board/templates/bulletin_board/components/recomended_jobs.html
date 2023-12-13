@@ -1,0 +1,64 @@
+{% load static %}
+{% load core_tags %}
+
+{% for job in recomended_jobs %}
+    <div class="col-md-6 col-xl-4 col-xxl-3 pxp-jobs-card-1-container">
+        <div class="pxp-jobs-card-1 pxp-has-border">
+            <div class="pxp-jobs-card-1-top">
+                <a
+                        href="{% url "bulletin_board:jobs_catalog" %}?category={{ job.category.id }}"
+                        class="pxp-jobs-card-1-category"
+                >
+                    <div class="pxp-jobs-card-1-category-icon">
+                        <span class="{{ job.category.icon_code }}"></span>
+                    </div>
+                    <div class="pxp-jobs-card-1-category-label">{{ job.category.title }}</div>
+                </a>
+                <a
+                        href="{% url "bulletin_board:job_view" job_id=job.id %}"
+                        class="pxp-jobs-card-1-title"
+                >
+                    {{ job.title }} {{ job.qualification }}
+                </a>
+                <div class="pxp-jobs-card-1-details">
+                    <a
+                            href="{% url "bulletin_board:jobs_catalog" %}?location={{ job.location.id }}"
+                            class="pxp-jobs-card-1-location"
+                    >
+                        <span class="fa fa-globe"></span>
+                        {{ job.location.city }}
+                    </a>
+                    <div class="pxp-jobs-card-1-type">
+                        {{ job.employment_type.title }}
+                    </div>
+                </div>
+                <div class="pxp-jobs-card-1-details">
+                    <a href="#" class="pxp-jobs-card-1-location">
+                        <span class="fa fa-money"></span>
+                        {{ job.salary }} руб.
+                    </a>
+                    <div class="pxp-jobs-card-1-type">
+                        {{ job.salary_condition.title }}
+                    </div>
+                </div>
+            </div>
+            <div class="pxp-jobs-card-1-bottom">
+                <div class="pxp-jobs-card-1-bottom-left">
+                    <div class="pxp-jobs-card-1-date pxp-text-light">от {{ job.published_at }}</div>
+                    <a href="{% url "bulletin_board:company_view" company_id=job.company.id %}"
+                       class="pxp-jobs-card-1-company">
+                        {{ job.company.name }}
+                    </a>
+                </div>
+                <a href="{% url "bulletin_board:company_view" company_id=job.company.id %}"
+                   class="pxp-jobs-card-1-company-logo"
+                        {% if job.company.brand_logo %}
+                   style="background-image: url({{ job.company.brand_logo.url }});"
+                        {% else %}
+                   style="background-image: url({% system_image_company_default_logo_url %});"
+                        {% endif %}
+                ></a>
+            </div>
+        </div>
+    </div>
+{% endfor %}

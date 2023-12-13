@@ -1,0 +1,68 @@
+{% extends 'industrial/baseapp.html' %}
+{% load static %}
+
+{% block page_title %}Пожалуйста подтвердите свою почту!{% endblock %}
+
+{% block page_content %}
+
+    {% if not user.is_email_confirmed %}
+
+        <h1>Пожалуйста подтвердите свою почту!</h1>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="mb-3">
+
+                    <label for="pxp-company-name" class="form-label">
+                        Код для подтверждения отправлено на почту: <b>{{ user.email }}</b>
+                    </label>
+
+                    <form method="post" action="{% url 'industrial:confirm_emailapp' %}">
+                        {% csrf_token %}
+                        <input
+                                type="text"
+                                id="pxp-company-name"
+                                class="form-control"
+                                placeholder="Код подтверждения"
+                                name="confirmation_code"
+                                required="required"
+                        >
+
+                        {% if is_code_wrong %}
+                            <br>
+                            <h4 class="text-danger">Код подтверждения введен неверно</h4>
+                        {% endif %}
+
+                        {% if code_is_sent %}
+                            <br>
+                            <h4 class="text-success">Код подтверждения отправлен на вашу электронную почту</h4>
+                        {% endif %}
+
+                        <br>
+                        <button
+                                type="submit"
+                                class="btn btn-success float-end"
+                        >
+                            Подтвердить
+                        </button>
+                    </form>
+                </div>
+
+                <div>
+                    <br>
+                    <br>
+                    <form action="{% url 'industrial:re_confirm_email_codeapp' %}" method="post">
+                        {% csrf_token %}
+                        Пожалуйста проверьте папку спам тоже! Если ещё не получили код подтверждения, можете запросить
+                        заново.
+                        <button class="btn btn-sm btn-dark">
+                            Запросить код повторно
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <h1>Ваша почта подтверждена</h1>
+    {% endif %}
+{% endblock %}

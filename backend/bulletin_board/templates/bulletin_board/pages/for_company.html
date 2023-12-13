@@ -1,0 +1,195 @@
+{% extends 'bulletin_board/base.html' %}
+{% load static %}
+{% load industrial_tags %}
+{% load bulletin_board_tags %}
+{% load cache %}
+
+{% block page_content %}
+    {% cache 1200 for_company_page_content_cache %}
+        <section>
+            <div class="pxp-container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-9">
+                        <div class="pxp-blog-hero">
+                            <h1 class="text-center"><span style="color: var(--pxpMainColor)">Jobox</span><br>выбирай то,
+                                что
+                                работает за тебя</h1>
+                            <div class="pxp-hero-subtitle pxp-text-light text-center">Удобная, интуитивно-понятная
+                                платформа
+                                для
+                                поиска соискателей
+                            </div>
+                        </div>
+
+                        <div id="pxp-blog-featured-posts-carousel"
+                             class="carousel slide carousel-fade pxp-blog-featured-posts-carousel"
+                             data-bs-ride="carousel">
+                            <div class="carousel-inner">
+
+                                {% for slider_blog in slider_blogs %}
+                                    <div
+                                        class="carousel-item {% if forloop.counter0 == 0 %} active {% endif %}"
+                                    >
+                                        <div class="pxp-featured-posts-item pxp-cover"
+                                             style="background-image: url({{ slider_blog.main_image.url }});">
+                                            <div class="pxp-hero-opacity"></div>
+                                            <div class="pxp-featured-posts-item-caption">
+                                                <div class="pxp-featured-posts-item-caption-content">
+                                                    <div class="row align-content-center justify-content-center">
+                                                        <div class="col-9 col-md-8 col-xl-7 col-xxl-6">
+                                                            <div class="pxp-featured-posts-item-date">{{ slider_blog.category.title }}</div>
+                                                            <div class="pxp-featured-posts-item-title">
+                                                                {{ slider_blog.title }}
+                                                            </div>
+                                                            <div class="pxp-featured-posts-item-summary pxp-text-light mt-2">
+                                                                {{ slider_blog.subtitle }}
+                                                            </div>
+                                                            <div class="mt-4 mt-md-5 text-center">
+                                                                {% if slider_blog.show_sing_in_on_company_page %}
+                                                                    <a href="{% url "industrial:sign_in" %}"
+                                                                       class="btn rounded-pill pxp-section-cta">
+                                                                        Вход в личный кабинет
+                                                                    </a>
+                                                                {% else %}
+                                                                    <a href="{% url "bulletin_board:blog_view" blog_id=slider_blog.id %}"
+                                                                       class="btn rounded-pill pxp-section-cta">
+                                                                        Подробнее
+                                                                    </a>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                            <button class="carousel-control-prev" type="button"
+                                    data-bs-target="#pxp-blog-featured-posts-carousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button"
+                                    data-bs-target="#pxp-blog-featured-posts-carousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+{% for_company_template_part_1 %}
+
+        <section class="pt-100 pb-100" style="background-color: var(--pxpMainColorLight);">
+            <div class="pxp-container">
+                <h2 class="pxp-section-h2">Компании</h2>
+                <p class="pxp-text-light">только проверенные контрагенты</p>
+
+                <div class="row mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top" style="word-wrap: break-word;">
+                    {% recomended_companies_list %}
+                </div>
+
+                <div class="mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top">
+                    <a
+                            href="{% url "bulletin_board:companies_list" %}"
+                            class="btn rounded-pill pxp-section-cta">
+                        Все компании <span class="fa fa-angle-right"></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-100">
+            <div class="pxp-container">
+                <h2 class="pxp-section-h2">Новости</h2>
+                <p class="pxp-text-light">всегда актуальные вести из мира HR</p>
+
+                <div class="row mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top" style="word-wrap: break-word;">
+                    {% recomended_blogs_list %}
+                </div>
+
+                <div class="mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top">
+                    <a href="{% url "bulletin_board:blog_list" %}" class="btn rounded-pill pxp-section-cta">
+                        Показать все статьи<span class="fa fa-angle-right"></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section class="mt-100 pxp-no-hero">
+            <div class="pxp-container">
+{#                <h2 class="pxp-section-h2 text-center">Наши контакты</h2>#}
+{#                <p class="pxp-text-light text-center">Будем рады Вам в любое время</p>#}
+{##}
+{#                <div class="row mt-4 mt-md-5 justify-content-center pxp-animate-in pxp-animate-in-top pxp-in">#}
+{#                    >#}
+{#                    <div class="col-lg-4 col-xxl-3 pxp-contact-card-1-container">#}
+{#                        <a href="#" class="pxp-contact-card-1">#}
+{#                            <div class="pxp-contact-card-1-icon-container">#}
+{#                                <div class="pxp-contact-card-1-icon">#}
+{#                                    <span class="fa fa-phone"></span>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="pxp-contact-card-1-title">8-800-700-33-21</div>#}
+{#                        </a>#}
+{#                    </div>#}
+{#                    <div class="col-lg-4 col-xxl-3 pxp-contact-card-1-container">#}
+{#                        <a href="#" class="pxp-contact-card-1">#}
+{#                            <div class="pxp-contact-card-1-icon-container">#}
+{#                                <div class="pxp-contact-card-1-icon">#}
+{#                                    <span class="fa fa-envelope-o"></span>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="pxp-contact-card-1-title">manager@rostjob.ru</div>#}
+{#                        </a>#}
+{#                    </div>#}
+{#                </div>#}
+
+                <div class="row mt-100 justify-content-center pxp-animate-in pxp-animate-in-top pxp-in">
+                    <div class="col-lg-6 col-xxl-4">
+                        <div class="pxp-contact-us-form pxp-has-animation pxp-animate">
+                            <h2 class="pxp-section-h2 text-center">Оставить заявку</h2>
+                            <form class="mt-4" action="{% url 'bulletin_board:application_to_admin' %}" method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="contact-us-name" class="form-label">Имя</label>
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="contact-us-name"
+                                            placeholder="Введите Ваше имя"
+                                            name="name"
+                                    >
+                                </div>
+                                <div class="mb-3">
+                                    <label for="contact-us-email" class="form-label">Email</label>
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="contact-us-email"
+                                            placeholder="Введите почту для связи с Вами"
+                                            name="email"
+                                    >
+                                </div>
+                                <div class="mb-3">
+                                    <label for="contact-us-message" class="form-label">Сообщение</label>
+                                    <textarea
+                                            class="form-control"
+                                            id="contact-us-message"
+                                            placeholder="Что вас заинтересовало?"
+                                            name="text"
+                                    ></textarea>
+                                </div>
+                                <button type="submit" class="btn rounded-pill pxp-section-cta d-block w-100">
+                                    Отправить
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endcache %}
+{% endblock %}

@@ -1,0 +1,256 @@
+{% extends 'bulletin_board/base.html' %}
+{% load static %}
+{% load cache %}
+{% load industrial_tags %}
+
+{% block page_content %}
+
+
+    <section class="pxp-hero pxp-hero-boxed">
+        <div class="pxp-container">
+            <div class="pxp-hero-boxed-content" style="background-color: var(--pxpMainColorLight);">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-12 col-xl-6 col-xxl-7">
+                        <h1>Найди работу <br>в один клик<br></h1>
+<!--                        <div class="pxp-hero-subtitle mt-3 mt-lg-4">-->
+<!--                            Зарегистрировано-->
+<!--                            <strong>-->
+<!--                                {% include 'bulletin_board/components/total_jobs_count_number.html' %}-->
+<!--                            </strong>-->
+<!--                            вакансий-->
+<!--                        </div>-->
+
+                        <div class="pxp-hero-form pxp-hero-form-round pxp-bigger mt-3 mt-lg-4">
+
+                            <form class="row gx-3 align-items-center" action="{% url 'bulletin_board:jobs_catalog' %}">
+
+                                <div class="col-12 col-md">
+                                    <div class="form-floating">
+                                        <input
+                                                name="title"
+                                                type="text"
+                                                class="form-control"
+                                                id="pxpHeroFormKeyword"
+                                                placeholder="Название вакансии"
+                                        >
+                                        <label for="pxpHeroFormKeyword">Вакансия</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-lg pxp-has-left-border">
+                                    <div class="input-group mb-3 mb-lg-0">
+{#                                        <span class="input-group-text"><span class="fa fa-globe"></span></span>#}
+
+                                        {#                                        <input list="brow">#}
+                                        {#                                        <datalist id="brow">#}
+                                        {#                                            {% for location in locations %}#}
+                                        {#                                                <option value="{{ location.id }}">{{ location.city }}</option>#}
+                                        {#                                            {% endfor %}#}
+                                        {#                                        </datalist>#}
+
+{#                                        <select class="form-select select2-location" name="location">#}
+{#                                            <option selected="" value="">Уточните город</option>#}
+{#                                            {% for location in locations %}#}
+{#                                                <option value="{{ location.id }}">{{ location.city }}</option>#}
+{#                                            {% endfor %}#}
+{#                                        </select>#}
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-auto">
+                                    <button type="submit">Найти работу</button>
+                                </div>
+                            </form>
+
+                        </div>
+
+                        <div class="pxp-hero-searches-container">
+                            <h3 class="pxp-hero-searches-label">Популярные запросы</h3><br>
+                            <div class="pxp-hero-searches">
+                                <div class="pxp-hero-searches-items">
+
+                                    {% cache 20 tags_to_show_on_main_page %}
+                                        {% for tag in tags_to_show_on_main_page %}
+                                            <a
+                                                    href="{% url 'bulletin_board:jobs_catalog' %}?tag={{ tag.id }}"
+                                            >
+                                                {{ tag.title }}
+                                            </a>
+                                        {% endfor %}
+                                    {% endcache %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-none d-xl-block col-xl-4 col-xxl-5 position-relative">
+                        <div class="pxp-hero-boxed-circulars pxp-animate-circles-bounce">
+                            <div class="pxp-hero-boxed-circular-outer">
+                                <div class="pxp-hero-boxed-circular-outer-1"></div>
+                                <div class="pxp-hero-boxed-circular-outer-2"></div>
+                                <div class="pxp-hero-boxed-circular-outer-3"></div>
+                            </div>
+                            <div class="pxp-hero-boxed-circular-middle">
+                                <div class="pxp-hero-boxed-circular-middle-1"></div>
+                                <div class="pxp-hero-boxed-circular-middle-2"></div>
+                                <div class="pxp-hero-boxed-circular-middle-3"></div>
+                            </div>
+                            <div class="pxp-hero-boxed-circular-center"></div>
+                        </div>
+
+                        <div class="pxp-hero-boxed-icon-circles">
+                            <div class="pxp-hero-boxed-icon-circle-1 pxp-animate-icon-circle-bounce">
+                                <img src="{% static 'industrial/' %}images/paper-icon.png" alt="Paper icon">
+                            </div>
+                            <div class="pxp-hero-boxed-icon-circle-2 pxp-animate-icon-circle-bounce">
+                                <img src="{% static 'industrial/' %}images/folder-icon.png" alt="Folder icon">
+                            </div>
+                        </div>
+
+                        <div class="pxp-hero-boxed-info-cards">
+                            <div class="pxp-hero-boxed-info-card-big pxp-animate-info-card">
+                                <div class="pxp-hero-boxed-info-card-big-content">
+                                    <div class="pxp-hero-boxed-info-card-big-icon">
+                                        <img src="{% static 'industrial/' %}images/service-2-icon.png"
+                                             alt="Job Fit Scoring">
+                                    </div>
+                                    <div class="pxp-hero-boxed-info-card-big-title">Большой выбор</div>
+                                    <div class="pxp-hero-boxed-info-card-big-text pxp-text-light">постоянно растущая
+                                        база
+                                        {% include 'bulletin_board/components/total_jobs_count_number.html' %} вакансий
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pxp-hero-boxed-info-card-small pxp-animate-info-card">
+                                <div class="pxp-hero-boxed-info-card-small-content">
+                                    <div class="pxp-hero-boxed-info-card-small-icon">
+                                        <img src="{% static 'industrial/' %}images/service-1-icon.png"
+                                             alt="Full-service recruiting">
+                                    </div>
+                                    <div class="pxp-hero-boxed-info-card-small-title">только проверенные работодатели
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pxp-hero-boxed-info-list-container pxp-animate-info-card">
+                                <div class="pxp-hero-card-info pxp-animate-bounce">
+                                    {% cache 20 bulletin_board_index_page_bouncing_categories_info %}
+                                        {% for category in categories_to_show_on_main_page|slice:"0:5" %}
+                                            <div class="pxp-hero-card-info-item">
+                                                <div class="pxp-hero-card-info-item-number">
+                                                    {{ category.jobs_count }}
+                                                    <span>вакансий</span>
+                                                </div>
+                                                <div class="pxp-hero-card-info-item-description">
+                                                    {{ category.title |lower }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endcache %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="mt-100">
+        <div class="pxp-container">
+            <h2 class="pxp-section-h2 text-center">Поиск по категориям</h2>
+            <p class="pxp-text-light text-center">Находи нужное в разделе, более подходящем для себя</p>
+
+            <div class="row mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top pxp-in">
+
+                {% cache 20 categories_to_show_on_main_page %}
+                    {% for category in categories_to_show_on_main_page %}
+                        <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xxl-2 pxp-categories-card-2-container">
+                            <a
+                                    href="{% url "bulletin_board:jobs_catalog" %}?category={{ category.id }}"
+                                    class="pxp-categories-card-2"
+                            >
+                                <div class="pxp-categories-card-2-icon-container">
+                                    <div class="pxp-categories-card-2-icon">
+                                        <span class="{{ category.icon_code }}"></span>
+                                    </div>
+                                </div>
+                                <div class="pxp-categories-card-2-title">{{ category.title }}</div>
+                                <div class="pxp-categories-card-2-subtitle">{{ category.jobs_count }} вакансий</div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% endcache %}
+
+            </div>
+
+            <div class="mt-4 mt-md-5 text-center pxp-animate-in pxp-animate-in-top pxp-in">
+                <a href="{% url "bulletin_board:jobs_catalog" %}" class="btn rounded-pill pxp-section-cta">
+                    Все категории
+                    <span class="fa fa-angle-right"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-100 pb-100">
+        <div class="pxp-container">
+            <h2 class="pxp-section-h2">Рекомендуем</h2>
+            <p class="pxp-text-light">на нашем портале размещено уже
+                {% include 'bulletin_board/components/total_jobs_count_number.html' %} вакансий</p>
+
+            <div class="row mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top">
+
+                {% recomended_jobs_list %}
+
+            </div>
+
+            <div class="mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top">
+                <a href="{% url "bulletin_board:jobs_catalog" %}" class="btn rounded-pill pxp-section-cta">
+                    Показать все вакансии
+                    <span class="fa fa-angle-right"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="pt-100 pb-100" style="background-color: var(--pxpMainColorLight);">
+        <div class="pxp-container">
+            <h2 class="pxp-section-h2">Компании</h2>
+            <p class="pxp-text-light">только проверенные контрагенты</p>
+
+            <div class="row mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top" style="word-wrap: break-word;">
+                {% recomended_companies_list %}
+            </div>
+
+            <div class="mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top">
+                <a
+                    href="{% url "bulletin_board:companies_list" %}"
+                    class="btn rounded-pill pxp-section-cta"
+                >
+                    Все компании
+                    <span class="fa fa-angle-right"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-100">
+        <div class="pxp-container">
+            <h2 class="pxp-section-h2">Новости</h2>
+            <p class="pxp-text-light">всегда актуальные вести из мира HR</p>
+
+            <div class="row mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top">
+                {% recomended_blogs_list %}
+            </div>
+
+            <div class="mt-4 mt-md-5 pxp-animate-in pxp-animate-in-top">
+                <a
+                        href="{% url "bulletin_board:blog_list" %}"
+                        class="btn rounded-pill pxp-section-cta"
+                >
+                    Показать все статьи
+                    <span class="fa fa-angle-right"></span></a>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

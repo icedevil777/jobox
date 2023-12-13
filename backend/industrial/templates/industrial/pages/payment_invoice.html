@@ -1,0 +1,128 @@
+{% extends 'industrial/base.html' %}
+{% block body_style %}
+    style="background: white"
+{% endblock %}
+
+{% block base_body %}
+    <header class="pxp-header fixed-top pxp-no-bg pxp-has-border">
+        <div class="pxp-container">
+            <div class="pxp-header-container">
+                <div class="pxp-logo-nav-container">
+                    <div class="pxp-logo">
+                        <a
+                                href="{% url "industrial:dashboard" %}"
+                                class="pxp-animate"><span
+                                style="color: var(--pxpMainColor)">
+                            job</span>ny.ru
+                        </a>
+                    </div>
+
+                </div>
+                <nav class="pxp-user-nav pxp-on-light">
+                    <a href="{{ request.META.HTTP_REFERER }}">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="mt-100 pxp-no-hero">
+        <div class="pxp-container">
+
+            <a class="pxp-text-light" href="{% url "industrial:dashboard" %}">
+                <span class="fa fa-angle-left"></span>
+                В личный кабинет
+            </a>
+
+            <br>
+            <br>
+
+            <h2 class="pxp-section-h2 ">Оплата</h2>
+            <p class="pxp-text-light">
+                <b>
+                    Счёт №{{ invoice.invoice_number }} от
+                    {#                    {{ invoice.created_at.day }}.{{ invoice.created_at.month }}.{{ invoice.created_at.year }}#}
+                    {{ invoice.created_at.date }}
+                </b>
+            </p>
+            {#            <h4>Зачисление на лицевой счёт по Договору #{{ user.industrial_worker.company.personal_account }}</h4>#}
+            <h4>{{ invoice.comment }}</h4>
+            <div class="row mt-4 mt-lg-5">
+                <div class="col-xxl-6">
+
+                    <div class="pxp-candidate-dashboard-notifications">
+
+                        <div class="pxp-candidate-dashboard-notifications-item mb-3">
+                            <div class="pxp-candidate-dashboard-notifications-item-left">
+                                <div class="pxp-candidate-dashboard-notifications-item-type">
+                                    {% if invoice.status == "waiting" %}
+                                        <span class="fa fa-clock-o"></span></div>
+                                        <div class="pxp-candidate-dashboard-notifications-item-message">
+                                            Счёт выставлен и ожидает оплаты
+                                        </div>
+                                    {% endif %}
+
+                                {% if invoice.status == "succeed" %}
+                                    <span class="fa fa-check-circle"></span></div>
+                                    <div class="pxp-candidate-dashboard-notifications-item-message">
+                                        Счёт оплачен
+                                    </div>
+                                {% endif %}
+
+                        </div>
+                        <div class="pxp-candidate-dashboard-notifications-item-right">
+                            <h3>
+                                <b>
+                                    {{ invoice.amount|floatformat:"g" }}
+                                    <span class="fa fa-rub" style="color: #0969c3"></span>
+                                </b>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="pxp-candidate-dashboard-notifications-item mb-3">
+                        <div class="pxp-candidate-dashboard-notifications-item-left">
+                            <div class="pxp-candidate-dashboard-notifications-item-type"></div>
+
+                            {% if invoice.status != 'succeed' %}
+                                {% if invoice.tinkoff_card_payment %}
+                                    <div class="pxp-candidate-dashboard-notifications-item-message">
+                                        <h5>Способ оплаты:
+                                            <br>
+                                            банковской картой
+                                        </h5>
+
+                                        <br>
+
+                                        <button
+                                                onclick="window.open('{{ invoice.tinkoff_card_payment.tinkoff_payment_url }}', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');"
+                                                class="btn rounded-pill pxp-section-cta"
+                                        >
+                                            Оплатить
+                                        </button>
+
+                                        <a
+                                                href="check"
+                                                class="btn rounded-pill pxp-section-cta"
+                                        >
+                                            <span class="fa fa-check"></span> Проверить платеж
+                                        </a>
+
+
+                                        {#                                        <br><br>#}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% if content.app_inst.have_tabel %}
+    {% if content.app_inst.have_education %}
+        <h4> Образование: </h4>
+        {% for edu in content.education_inst %}
+        <div class="row" style="margin: 1%;">
+            <div class="col-xxl-10 col-sm-8 text-left border border-primary" style="border-radius: 15px";>
+                {{ edu.name }} | {{ edu.faculty }} | {{ edu.specialization }} | {{ edu.level }} | с {{ edu.start_data|date:"d-m-Y" }} по {{edu.end_data|date:"d-m-Y"}}
+            </div>
+<!--            <div class="col-xxl-2 col-sm-1 text-right" >-->
+<!--                <button class="btn btn-primary btn-sm rounded-pill" type="submit"-->
+<!--                        onclick='show_modal_edu("{{ edu.name }}", "{{ edu.specialization }}", "{{ edu.level }}", "{{ edu.start_data }}", "{{ edu.end_data }}" );'>Подробнее-->
+<!--                </button>-->
+<!--            </div>-->
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% if content.app_inst.have_experience %}
+        <h4> Опыт работы: </h4>
+        {% for exp in content.experience_inst %}
+        <div class="row" style="margin: 1%;">
+            <div class="col-xxl-10 col-sm-8 text-left border border-primary" style="border-radius: 15px; word-wrap: break-word;">
+                {{ exp.name }} | {{  exp.position }} | {{  exp.function }} | с {{ exp.start_data|date:"d-m-Y" }} по {{exp.end_data|date:"d-m-Y"}}
+            </div>
+<!--            <div class="col-xxl-2 col-sm-4 d-flex justify-content-right">-->
+<!--                <button class="btn btn-primary btn-sm rounded-pill" type="submit" style="background-color: #0d6efd"-->
+<!--                        onclick='show_modal_exp("{{ exp.name }}", "{{ exp.position }}", "{{ exp.function }}", "{{ exp.start_data }}", "{{ exp.end_data }}" );'>Подробнее-->
+<!--                </button>-->
+<!--            </div>-->
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+
+<script>
+    function show_modal_edu(name, specialization, level, start_data, end_data){
+        document.getElementById("edu_name").innerHTML = name;
+        document.getElementById("edu_specialization").innerHTML = specialization;
+        document.getElementById("edu_level").innerHTML = level;
+        document.getElementById("edu_start_data").innerHTML = start_data;
+        document.getElementById("edu_end_data").innerHTML = end_data;
+        const myModal777 = new bootstrap.Modal(document.getElementById('edu_modal'))
+        myModal777.show()
+    }
+
+    function show_modal_exp(name, position, functin, start_data, end_data) {
+        document.getElementById("exp_name").innerHTML = name;
+        document.getElementById("exp_position").innerHTML = position;
+        document.getElementById("exp_function").innerHTML = functin;
+        document.getElementById("exp_start_data").innerHTML = start_data;
+        document.getElementById("exp_end_data").innerHTML = end_data;
+        const myModal666 = new bootstrap.Modal(document.getElementById('exp_modal'))
+        myModal666.show()
+    }
+
+</script>

@@ -1,0 +1,386 @@
+{% extends 'industrial/base.html' %}
+
+{% block page_content %}
+
+
+    <div class="row mt-4 mt-lg-5">
+
+        <div class="col-xl-6">
+            <h1>Профиль</h1>
+            <p class="pxp-text-light">Юридическая информация о вашем предприятии формируется автоматически из базы ФНС
+                РФ
+                и не подлежит изменению. Если информация не совпадает, проверьте правильность введенного при регистрации
+                ИНН. За размещение прочих (редактируемых) данных о Вашем предприятии Вы несете
+                юридическую ответственность. Просим Вас соблюдать законы и с уважением относиться к нашему ресурсу.
+                Подробности в договоре оферты</p>
+        </div>
+        <div class="col-xl-6">
+
+            <div class="mt-3 mt-lg-4 pxp-dashboard-chart-container">
+                <div class="row justify-content-between align-content-center mb-4">
+                    <div class="row justify-content-between align-content-center mb-4">
+                        <div class="col-auto">
+                            <h4 class="pxp-candidate-dashboard-messages-item-name">Бренд</h4>
+                        </div>
+                        <p class="mt-1 mb-0"> По умолчанию будет использован логотип-заглушка Jobox.ru и название Вашего
+                            предприятия из базы ФНС.</p>
+                    </div>
+                    <form action="{% url "industrial:edit_brand_info" %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row mt-2 mt-lg-2">
+                            <div class="col-xxl-8">
+                                <div class="mb-3">
+                                    <label for="pxp-company-name" class="form-label">Название бренда или торговой
+                                        марки</label>
+                                    <input
+                                            type="text"
+                                            id="pxp-company-name"
+                                            class="form-control"
+                                            placeholder="Добавить бренд"
+                                            name="brand_name"
+                                            {% if user.industrial_worker.company.brand_name %}
+                                            value="{{ user.industrial_worker.company.brand_name }}"
+                                            {% endif %}
+                                    >
+                                </div>
+
+
+                            </div>
+                            <div class="col-xxl-4">
+                                <div class="form-label">&nbsp;</div>
+
+                                <div class="pxp-company-logo mb-3">
+                                    <input
+                                            type="file"
+                                            id="pxp-company-logo-choose-file"
+                                            accept="image/*"
+                                            name="brand_logo"
+                                    >
+                                    <label
+                                            for="pxp-company-logo-choose-file"
+                                            class="pxp-cover"
+                                            {% if user.industrial_worker.company.brand_logo %}
+                                            style="background-image: url({{ user.industrial_worker.company.brand_logo.url }})"
+                                            {% endif %}
+                                    >
+                                        <span>+<br>Логотип</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2 mt-lg-2">
+                            <button
+                                    type="submit"
+                                    class="btn rounded-pill pxp-section-cta"
+                            >Сохранить
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+
+
+                <div class="pxp-candidate-dashboard-messages-item-details ms-3">
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row mt-4 mt-lg-5">
+
+        <div class="col-xl-6">
+
+            <div class="mt-3 mt-lg-4 pxp-dashboard-chart-container">
+                <div class="row justify-content-between align-content-center mb-4">
+                    <div class="pxp-candidate-dashboard-messages-item-details ms-3">
+                        <h4 class="pxp-candidate-dashboard-messages-item-name">{{ user.industrial_worker.company.name }}</h4>
+
+                        <p class="mt-1 mb-0">{{ user.industrial_worker.company.opf_full }}</p>
+                    </div>
+
+                </div>
+                <table class="table align-middle">
+                    <tbody>
+
+                    <tr>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">Учредитель:</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-name">{{ user.industrial_worker.company.director_name }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">Дата открытия:</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">{{ user.industrial_worker.company.registration_date_normal_view }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">ИНН:</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">{{ user.industrial_worker.company.inn }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">ОГРН:</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">{{ user.industrial_worker.company.ogrn }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">КПП:</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">{{ user.industrial_worker.company.kpp }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">Адрес:</div>
+                        </td>
+                        <td style="width: 75%;">
+                            <div class="pxp-company-dashboard-candidate-title">
+                                {{ user.industrial_worker.company.address }}
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="col-xl-6">
+
+            <div class="mt-3 mt-lg-4 pxp-dashboard-chart-container">
+                <div class="row justify-content-between align-content-center mb-4">
+
+                    <div class="row justify-content-between align-content-center mb-4">
+                        <div class="col-auto">
+                            <h4 class="pxp-candidate-dashboard-messages-item-name">Администратор</h4>
+                        </div>
+                        <div class="col-auto">
+                            <a class="btn rounded-pill pxp-user-nav-trigger pxp-on-light" data-bs-toggle="modal"
+                               href="#pxp-edit-admin-modal" role="button"
+                               style="border: 1px solid rgb(0 0 0 / 50%);color: #000; ">Редактировать</a>
+                        </div>
+                    </div>
+
+                </div>
+                <table class="table align-middle">
+                    <tbody>
+                    <tr>
+
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">e-mail:</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-name">{{ user.industrial_worker.email }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">Имя:</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-name">{{ user.industrial_worker.name }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">Должность:</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">{{ user.industrial_worker.position }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-title">Номер телефона:</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="pxp-company-dashboard-candidate-name">{{ user.industrial_worker.phone }}</div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                <div class="pxp-candidate-dashboard-messages-item-details ms-3">
+                    <p class="mt-1 mb-0"> Заполняя данный раздел, Вы соглашаетесь с правилами использования персональных
+                        данных. При размещении вакансии Вам будет предложено использовать данные Администратора. </p>
+                    <br>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="row mt-4 mt-lg-5 ">
+        {#  Описание копании  #}
+        <div
+                class="col-xl-6"
+                id="company_description_viewer"
+        >
+            <div class="mt-3 mt-lg-4 pxp-dashboard-chart-container ">
+
+
+                <div class="row justify-content-between align-content-center mb-4">
+                    <div class="col-auto">
+                        <h4 class="pxp-candidate-dashboard-messages-item-name">Описание компании</h4>
+                    </div>
+                    <div class="col-auto">
+                        <button
+                                class="btn rounded-pill"
+                                role="button"
+                                style="border: 1px solid rgb(0 0 0 / 50%);color: #000; "
+                                onclick="show_description_editor()"
+                        >Заполнить
+                        </button>
+                    </div>
+                </div>
+                <p class="mt-1 mb-0" style="word-wrap: break-word">
+                    {{ user.industrial_worker.company.company_description }}
+                </p>
+            </div>
+        </div>
+        <div
+                class="col-xl-6"
+                id="company_description_editor"
+                style="display: none;"
+        >
+
+            <div class="mt-3 mt-lg-4 pxp-dashboard-chart-container ">
+
+                <form action="{% url 'industrial:edit_company_description' %}" method="post">
+                    {% csrf_token %}
+
+                    <div
+                            class="row justify-content-between align-content-center mb-4"
+                    >
+                        <div class="col-auto">
+                            <h4 class="pxp-candidate-dashboard-messages-item-name">Описание компании</h4>
+                        </div>
+
+                        <div class="col-auto">
+
+                            <button class="btn rounded-pill"
+                                    type="submit" role="button"
+                                    style="border: 1px solid rgb(0 0 0 / 50%);color: #000; "
+                            >Сохранить
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                        <br>
+                        <textarea
+                                style="width: 100%; height: 100%;"
+                                class="form-control " id="pxp-company-about"
+                                placeholder="Здесь пока пусто..." name="description"
+                        >{{ user.industrial_worker.company.company_description }}</textarea>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="col-xl-6">
+            <div class="mt-3 mt-lg-4 pxp-dashboard-chart-container ">
+                <div class="row justify-content-between align-content-center mb-4">
+                    <div class="col-auto">
+                        <h4 class="pxp-candidate-dashboard-messages-item-name">
+                            Пароль
+                            {% if password_was_no_changed %} <span class="text-danger">Ошибка!</span>  {% endif %}
+                        </h4>
+                    </div>
+                    <div class="col-auto">
+                        <a class="btn rounded-pill" data-bs-toggle="modal"
+                           href="#pxp-edit-pass" role="button" style="border: 1px solid rgb(0 0 0 / 50%);color: #000; ">Изменить</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+{#    <div class="row justify-content-center center-block align-content-center">#}
+{##}
+{#        <div class="col-sm-12 d-sm-block d-sm-none center-block align-content-center">#}
+{#            <div class="row" style="padding-right: 10%; padding-left: 10%;">#}
+{#            <a class="btn rounded-pill" data-bs-toggle="modal"#}
+{#               href="#pxp-edit-pass" role="button" style="border: 1px solid rgb(0 0 0 / 50%);color: #000;">Изменить Пароль</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+
+    <div class="modal fade pxp-user-modal" id="pxp-edit-pass" aria-hidden="true" aria-labelledby="signupModal"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pxp-user-modal-fig text-center">
+
+                    </div>
+                    <h5 class="modal-title text-center mt-4" id="signinModal">Изменить пароль</h5>
+                    <form class="mt-4" method="post" action="{% url 'industrial:edit_user_password' %}">
+                        {% csrf_token %}
+
+                        <div class="form-floating mb-3">
+                            <input type="password" id="pxp-company-old-password" class="form-control"
+                                   placeholder="Enter old password" name="password">
+                            <label for="pxp-company-old-password" class="form-label">Старый пароль</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" id="pxp-company-old-password" class="form-control"
+                                   placeholder="Enter old password" name="new_password">
+                            <label for="pxp-company-old-password" class="form-label">Новый пароль</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" id="pxp-company-old-password" class="form-control"
+                                   placeholder="Enter old password" name="new_password_repeat">
+                            <label for="pxp-company-old-password" class="form-label">Повторите новый пароль</label>
+                        </div>
+
+                        <button type="submit" class="btn rounded-pill pxp-modal-cta w-100">Сохранить</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const is_show_description_editor = false;
+
+        function show_description_editor() {
+            document.getElementById('company_description_viewer').style = "display:none;";
+            document.getElementById('company_description_editor').style = "";
+        }
+    </script>
+
+{% endblock %}

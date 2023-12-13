@@ -1,0 +1,63 @@
+version: '3.8'
+services:
+  web:
+    build: ./backend
+    volumes:
+      - ./static_root/:/usr/jobox/static_root/
+      - ./media_root/:/usr/jobox/media_root/
+    command: gunicorn backend.wsgi:application -w 3 --bind 0.0.0.0:8001
+    expose:
+      - "8001"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+      - redis
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./dump/:/tmp/
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5431:5432"
+  nginx:
+    image: nginx:1.15-alpine
+    restart: unless-stopped
+    environment:
+      - SERVER_NAME=${SERVER_NAME}
+    volumes:
+      - ./static_root/:/usr/jobox/static_root/
+      - ./media_root/:/usr/jobox/media_root/
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    ports:
+      - ${PORTS}
+      - "443:443"
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    depends_on:
+      - web
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    environment:
+      - SERVER_NAME=${SERVER_NAME}
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  redis:
+    image: redis:5.0.7-alpine3.10
+    ports:
+      - "6377:6379"
+    restart: always
+volumes:
+  postgres_data:
+  static_root:
+  media_root:
+  dump:
+  data:

@@ -1,0 +1,14 @@
+{% load cache %}
+<div class="pxp-footer-social mt-3 mt-lg-0">
+    {% cache 3600 social_links %}
+        <ul class="list-unstyled" style="color: white">
+            {% for social_link in social_links %}
+                <li>
+                    <a href="{{ social_link.url }}" style="color: white">
+                        <span class="{{ social_link.icon_code }}"></span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endcache %}
+</div>

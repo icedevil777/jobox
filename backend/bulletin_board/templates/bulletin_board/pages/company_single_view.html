@@ -1,0 +1,249 @@
+{% extends 'bulletin_board/base.html' %}
+{% load static %}
+{% load core_tags %}
+
+{% block page_meta %}
+    <meta property="og:url" content="{{ request.path }}"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="{{ company_instance.name }}."/>
+    <meta property="og:description"
+          content="ИНН: {{ company_instance.inn }}. Вакансий на портале: {{ company_jobs_count }} шт."/>
+    <meta property="og:image" content="{% static 'industrial/images/company-logo-1.png' %}"/>
+{% endblock %}
+
+
+{% block page_content %}
+    <section class="mt-100">
+        <div class="pxp-container">
+            <div class="row">
+                <div class="col-lg-7 col-xl-8 col-xxl-9">
+                    <div class="pxp-jobs-card-2-top">
+                        <a class="pxp-jobs-card-2-company-logo"
+                                {% if company_instance.brand_logo %}
+                           style="background-image: url({{ company_instance.brand_logo.url }});"></a>
+                                {% else %}
+                                    style="background-image: url({% system_image_company_default_logo_url %});">
+                                    </a>
+                                {% endif %}
+
+                    </div>
+                    <br>
+                    <div class="pxp-single-company-content" style="word-wrap: break-word">
+                        {% if company_instance.brand_name %}
+                            <h1>{{ company_instance.brand_name }}</h1>
+                        {% else %}
+                            <h2>{{ company_instance.name }}</h2>
+                        {% endif %}
+                        <p>
+                            {{ company_instance.company_description |linebreaksbr }}
+                        </p>
+
+
+                    </div>
+                    <div>
+                        <br>
+                        <h2>Вакансии компании</h2>
+                        <p class="pxp-text-light">Заявлено {{ company_jobs_count }} вакансии</p>
+
+                        {% for job in company_job %}
+                            <div class="pxp-jobs-card-3 pxp-has-border">
+
+                                <div class="row align-items-center justify-content-between">
+                                    <div class="col-sm-9 col-md-10 col-lg-9 col-xl-10 col-xxl-4">
+                                        <a
+                                                href="{% url "bulletin_board:job_view" job_id=job.id %}"
+                                                class="pxp-jobs-card-3-title mt-3 mt-sm-0">
+                                            {{ job.title }} {{ job.qualification }}
+                                        </a>
+                                        <div class="pxp-jobs-card-3-details">
+                                            <a
+                                                    href="{% url "bulletin_board:jobs_catalog" %}?location={{ job.location_id }}"
+                                                    class="pxp-jobs-card-3-location"
+                                            >
+                                                <span class="fa fa-globe"></span>{{ job.location.city }}
+                                            </a>
+                                            <div class="pxp-jobs-card-3-type">{{ job.employment_type.title }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8 col-xl-6 col-xxl-4 mt-3 mt-xxl-0">
+
+                                        <a href="#" class="pxp-jobs-card-3-company">
+                                            {{ job.salary }}
+                                            <span class="fa fa-rub"></span>
+                                            / {{ job.salary_condition.title }}
+                                        </a>
+                                        <div class="pxp-jobs-card-3-date-company">
+                                            <a
+                                                    href="{% url 'bulletin_board:job_view' job_id=job.id %}"
+                                                    class="pxp-jobs-card-3-category">
+                                                <div class="pxp-jobs-card-3-category-label">
+                                                    от {{ job.published_at_simple }}</div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 col-xl-3 col-xxl-auto mt-3 mt-xxl-0 pxp-text-right">
+                                        <a
+                                                href="{% url 'bulletin_board:job_view' job_id=job.id %}"
+                                                class="btn rounded-pill pxp-card-btn">Подробнее</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+                <div class="col-lg-5 col-xl-4 col-xxl-3">
+                    <div class="pxp-single-company-side-panel mt-5 mt-lg-0">
+                        <div class="mt-4">
+                            <div class="pxp-single-company-side-info-label pxp-text-light">ОРГАНИЗАЦИЯ</div>
+                            <div class="pxp-single-company-side-info-data">{{ company_instance.name }}</div>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="pxp-single-company-side-info-label pxp-text-light">ИНН</div>
+                            <div class="pxp-single-company-side-info-data">{{ company_instance.inn }}</div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="pxp-single-company-side-info-label pxp-text-light">ОГРН</div>
+                            <div class="pxp-single-company-side-info-data">{{ company_instance.ogrn }}</div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="pxp-single-company-side-info-label pxp-text-light">Дата открытия</div>
+                            <div class="pxp-single-company-side-info-data">{{ company_instance.registration_date.year }}</div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="pxp-single-company-side-info-label pxp-text-light">Юридический адрес</div>
+                            <div class="pxp-single-company-side-info-data">{{ company_instance.address }}</div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="pxp-single-company-side-info-label pxp-text-light">Email</div>
+                            <div class="pxp-single-company-side-info-data">office@artistre-studio.com</div>
+                        </div>
+                        <div class="mt-4">
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {#    <section class="mt-100">#}
+    {#        <div class="pxp-container">#}
+    {#            <h2 class="pxp-subsection-h2">Available Jobs</h2>#}
+    {#            <p class="pxp-text-light">Jobs list posted by Artistre Studio</p>#}
+    {##}
+    {#            <div class="row mt-3 mt-md-4 pxp-animate-in pxp-animate-in-top pxp-in">#}
+    {#                <div class="col-xl-6 pxp-jobs-card-2-container">#}
+    {#                    <div class="pxp-jobs-card-2 pxp-has-border">#}
+    {#                        <div class="pxp-jobs-card-2-top">#}
+    {#                            <a href="single-company-1.html" class="pxp-jobs-card-2-company-logo"#}
+    {#                               style="background-image: url({% static "industrial/" %}images/company-logo-1.png);"></a>#}
+    {#                            <div class="pxp-jobs-card-2-info">#}
+    {#                                <a href="single-job-1.html" class="pxp-jobs-card-2-title">Software Engineering Team#}
+    {#                                    Leader</a>#}
+    {#                                <div class="pxp-jobs-card-2-details">#}
+    {#                                    <a href="jobs-list-1.html" class="pxp-jobs-card-2-location">#}
+    {#                                        <span class="fa fa-globe"></span>Los Angeles, CA#}
+    {#                                    </a>#}
+    {#                                    <div class="pxp-jobs-card-2-type">Full-time</div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                        <div class="pxp-jobs-card-2-bottom">#}
+    {#                            <a href="jobs-list-1.html" class="pxp-jobs-card-2-category">#}
+    {#                                <div class="pxp-jobs-card-2-category-label">Project Management</div>#}
+    {#                            </a>#}
+    {#                            <div class="pxp-jobs-card-2-bottom-right">#}
+    {#                                <span class="pxp-jobs-card-2-date pxp-text-light">3 days ago by</span> <a#}
+    {#                                    href="single-company-1.html" class="pxp-jobs-card-2-company">Artistre Studio</a>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#                <div class="col-xl-6 pxp-jobs-card-2-container">#}
+    {#                    <div class="pxp-jobs-card-2 pxp-has-border">#}
+    {#                        <div class="pxp-jobs-card-2-top">#}
+    {#                            <a href="single-company-1.html" class="pxp-jobs-card-2-company-logo"#}
+    {#                               style="background-image: url({% static "industrial/" %}images/company-logo-1.png);"></a>#}
+    {#                            <div class="pxp-jobs-card-2-info">#}
+    {#                                <a href="single-job-1.html" class="pxp-jobs-card-2-title">Techincal Support Engineer</a>#}
+    {#                                <div class="pxp-jobs-card-2-details">#}
+    {#                                    <a href="jobs-list-1.html" class="pxp-jobs-card-2-location">#}
+    {#                                        <span class="fa fa-globe"></span>Paris, France#}
+    {#                                    </a>#}
+    {#                                    <div class="pxp-jobs-card-2-type">Full-time</div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                        <div class="pxp-jobs-card-2-bottom">#}
+    {#                            <a href="jobs-list-1.html" class="pxp-jobs-card-2-category">#}
+    {#                                <div class="pxp-jobs-card-2-category-label">Customer Service</div>#}
+    {#                            </a>#}
+    {#                            <div class="pxp-jobs-card-2-bottom-right">#}
+    {#                                <span class="pxp-jobs-card-2-date pxp-text-light">3 days ago by</span> <a#}
+    {#                                    href="single-company-1.html" class="pxp-jobs-card-2-company">Artistre Studio</a>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#                <div class="col-xl-6 pxp-jobs-card-2-container">#}
+    {#                    <div class="pxp-jobs-card-2 pxp-has-border">#}
+    {#                        <div class="pxp-jobs-card-2-top">#}
+    {#                            <a href="single-company-1.html" class="pxp-jobs-card-2-company-logo"#}
+    {#                               style="background-image: url({% static "industrial/" %}images/company-logo-1.png);"></a>#}
+    {#                            <div class="pxp-jobs-card-2-info">#}
+    {#                                <a href="single-job-1.html" class="pxp-jobs-card-2-title">Javascript Developer</a>#}
+    {#                                <div class="pxp-jobs-card-2-details">#}
+    {#                                    <a href="jobs-list-1.html" class="pxp-jobs-card-2-location">#}
+    {#                                        <span class="fa fa-globe"></span>London, UK#}
+    {#                                    </a>#}
+    {#                                    <div class="pxp-jobs-card-2-type">Full-time</div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                        <div class="pxp-jobs-card-2-bottom">#}
+    {#                            <a href="jobs-list-1.html" class="pxp-jobs-card-2-category">#}
+    {#                                <div class="pxp-jobs-card-2-category-label">Software Engineering</div>#}
+    {#                            </a>#}
+    {#                            <div class="pxp-jobs-card-2-bottom-right">#}
+    {#                                <span class="pxp-jobs-card-2-date pxp-text-light">3 days ago by</span> <a#}
+    {#                                    href="single-company-1.html" class="pxp-jobs-card-2-company">Artistre Studio</a>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#                <div class="col-xl-6 pxp-jobs-card-2-container">#}
+    {#                    <div class="pxp-jobs-card-2 pxp-has-border">#}
+    {#                        <div class="pxp-jobs-card-2-top">#}
+    {#                            <a href="single-company-1.html" class="pxp-jobs-card-2-company-logo"#}
+    {#                               style="background-image: url({% static "industrial/" %}images/company-logo-1.png);"></a>#}
+    {#                            <div class="pxp-jobs-card-2-info">#}
+    {#                                <a href="single-job-1.html" class="pxp-jobs-card-2-title">Technical Writer</a>#}
+    {#                                <div class="pxp-jobs-card-2-details">#}
+    {#                                    <a href="jobs-list-1.html" class="pxp-jobs-card-2-location">#}
+    {#                                        <span class="fa fa-globe"></span>London, UK#}
+    {#                                    </a>#}
+    {#                                    <div class="pxp-jobs-card-2-type">Full-time</div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                        <div class="pxp-jobs-card-2-bottom">#}
+    {#                            <a href="jobs-list-1.html" class="pxp-jobs-card-2-category">#}
+    {#                                <div class="pxp-jobs-card-2-category-label">Business Development</div>#}
+    {#                            </a>#}
+    {#                            <div class="pxp-jobs-card-2-bottom-right">#}
+    {#                                <span class="pxp-jobs-card-2-date pxp-text-light">3 days ago by</span> <a#}
+    {#                                    href="single-company-1.html" class="pxp-jobs-card-2-company">Artistre Studio</a>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </section>#}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% load cache %}
+{% load static %}
+{% cache 1200 recomended_blogs %}
+    {% for blog in recomended_blogs %}
+        <div class="col-md-6 col-xl-4 col-xxl-3 pxp-posts-card-1-container">
+            <div class="pxp-posts-card-1 pxp-has-border">
+                <div class="pxp-posts-card-1-top">
+                    <div class="pxp-posts-card-1-top-bg">
+                        <div
+                                class="pxp-posts-card-1-image pxp-cover"
+                                style="background-image: url({{ blog.main_image.url }});"
+                        ></div>
+                        <div class="pxp-posts-card-1-info">
+                            <div class="pxp-posts-card-1-date">
+                                {{ blog.created_at }}
+                            </div>
+                            <a
+                                    href="{% url "bulletin_board:blog_view" blog_id=blog.id %}"
+                                    class="pxp-posts-card-1-category">
+                                {{ blog.category.title }}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="pxp-posts-card-1-content">
+                        <a
+                                href="{% url "bulletin_board:blog_view" blog_id=blog.id %}"
+                                class="pxp-posts-card-1-title"
+                        >
+                            {{ blog.title }}
+                        </a>
+                        <div class="pxp-posts-card-1-summary pxp-text-light">
+                            {{ blog.subtitle }}
+                        </div>
+                    </div>
+                </div>
+                <div class="pxp-posts-card-1-bottom">
+                    <div class="pxp-posts-card-1-cta">
+                        <a
+                                href="{% url "bulletin_board:blog_view" blog_id=blog.id %}"
+                        >
+                            Узнать больше
+                            <span class="fa fa-angle-right"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endcache %}

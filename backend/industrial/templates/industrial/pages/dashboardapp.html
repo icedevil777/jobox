@@ -1,0 +1,24 @@
+{% extends 'industrial/baseapp.html' %}
+{% load static %}
+{% load industrial_tags %}
+
+{% block page_title %}Личный кабинет{% endblock %}
+
+
+{% block page_content %}
+
+<div class="container" style="margin-top: 5%;">
+    <div class="row">
+        {% if not content.app_inst.have_resume %}
+        <div class="col-12 ">
+            <h1>Добро пожаловать!</h1>
+            <p class="pxp-text-light">Платформа Jobox - инструмент для размещения Ваших резюме.</p>
+            <a href="{% url 'industrial:edit_summary' %}"><button class="btn btn-secondary">Создать новое резюме</button></a>
+        </div>
+    </div>
+</div>
+        {% else %}
+            {% include 'industrial/components/summary.html' %}
+        {% endif %}
+
+{% endblock %}

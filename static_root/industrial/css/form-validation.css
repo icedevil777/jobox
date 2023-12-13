@@ -1,0 +1,79 @@
+.form__validation {
+    position: relative;
+}
+.form__requirements {
+    max-height: 0;
+    overflow: hidden;
+    border-radius: 6px;
+    transition: opacity 0.3s ease 0s;
+    position: absolute;
+    opacity: 0;
+    background-color: #fff;
+    z-index: 3;
+    top: -22%;
+    left: 6%;
+    color: red;
+}
+._form__requirements {
+    top: 20%;
+}
+.form__requirements:invalid:not(:focus) {
+    border-color: red;
+}
+.input__requirements:invalid:not(:focus) {
+    border-color: red;
+}
+.form__requirements:invalid:not(:focus) {
+    border-color: red;
+}
+.input__requirements:invalid:not(:focus) ~ .form__requirements {
+    max-height: 200px;
+    transition: 0.3s ease 0s;
+    opacity: 1;
+}
+.form__requirements--not-match {
+    overflow: hidden;
+    border-radius: 6px;
+    transition: 0.3s ease 0s;
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    background-color: #fff;
+    z-index: 3;
+    top: -22%;
+    left: 6%;
+    color: red;
+}
+.form__requirements--not-match.show {
+    opacity: 1;
+    pointer-events: auto;
+    border-color: red;
+}
+@media screen and (max-width: 500px) {
+    .form__requirements {
+        font-size: 13px;
+        top: -17%;
+    }
+    ._form__requirements {
+        font-size: 13px;
+        top: 22%;
+    }
+    .form__requirements--not-match {
+        font-size: 13px;
+        top: -17%;
+    }
+}
+@media screen and (max-width: 380px) {
+    .form__requirements {
+        font-size: 11px;
+        top: -15%;
+    }
+    ._form__requirements {
+        font-size: 11px;
+        top: 25%;
+    }
+    .form__requirements--not-match {
+        font-size: 11px;
+        top: -15%;
+    }
+}

@@ -1,0 +1,101 @@
+{% extends "industrial/base.html" %}
+{% load static %}
+
+{% block page_title %}Финансы{% endblock %}
+
+{% block page_content %}
+    <h1>Финансы</h1>
+    <p class="pxp-text-light">В таблице отражены все операции по вашему лицевому счету, включая зачисления бонусов.</p>
+    <div class="row justify-content-between align-content-center">
+
+        <div class="col-auto order-2 order-sm-1">
+            <div class="pxp-company-dashboard-jobs-bulk-actions mb-3">
+                <form action="" style="display: flex">
+                    <select class="form-select" name="currency" style="padding: 10px; width: 120px;">
+                        <option value>Все</option>
+                        <option value="ruble">Баланс</option>
+                        <option value="bonus_point">Бонусы</option>
+                    </select>
+                    <button class="btn ms-2" type="submit">Применить</button>
+                </form>
+
+                <a
+                        href="{% url 'industrial:payment_invoices' %}"
+                        class="link-dark"
+                        style="margin-left: 15px;"
+                >
+                    История
+                </a>
+
+            </div>
+        </div>
+        <div class="col-auto order-1 order-sm-2">
+            <div class="pxp-company-dashboard-jobs-search mb-3">
+                <div class="pxp-company-dashboard-jobs-search-results me-3">
+                    Баланс:
+                    {{ transaction_totals.ruble_total|floatformat:'0g' }}
+                    {% if not transaction_totals.ruble_total %}0{% endif %} руб.
+                    /
+                    бонусы:
+                    {{ transaction_totals.bonus_point_total|floatformat:'0g' }}
+                    {% if not transaction_totals.bonus_point_total %}{% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="mt-4 mt-lg-5">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th style="width: 25%;">Действие</th>
+                    <th style="width: 25%;">Калькуляция</th>
+                    <th style="width: 25%;">Дата<span class="fa fa-angle-up ms-3"></span></th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>
+                            <div class="pxp-company-dashboard-subscriptions-plan">{{ transaction.get_action_display }}</div>
+                        </td>
+                        <td>
+                            <div class="pxp-company-dashboard-subscriptions-status">
+                                {% if transaction.amount > 0 %}
+                                    +
+                                {% endif %}
+                                {{ transaction.amount|floatformat:"-3g" }}
+                                {% if transaction.currency == 'ruble' %}
+                                    руб.
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pxp-company-dashboard-job-date">
+                                {{ transaction.created_at.year }}/{{ transaction.created_at.month }}/{{ transaction.created_at.day }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pxp-dashboard-table-options">
+                                <ul class="list-unstyled">
+                                    <li>
+                                        {% if transaction.payment_invoice %}
+                                            <a
+                                                    href="{% url "industrial:payment_invoice" invoice_id=transaction.payment_invoice.id %}"
+                                                    title="View invoice">
+                                                <span class="fa fa-eye"></span>
+                                            </a>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

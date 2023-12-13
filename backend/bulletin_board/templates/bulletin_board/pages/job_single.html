@@ -1,0 +1,390 @@
+{% extends 'bulletin_board/base.html' %}
+{% load static %}
+{% load core_tags %}
+
+{% block page_title %}
+    {# SEO TITLE    #}
+    {% if job_instance.seo_title %}
+        {{ job_instance.seo_title }}
+    {% else %}
+        {{ job_instance.title }}
+    {% endif %}
+{% endblock %}
+
+{% block page_meta %}
+
+    {# SEO TITLE    #}
+    {% if job_instance.seo_title %}
+        <meta name="title" content="{{ job_instance.seo_title }}"/>
+    {% else %}
+        <meta name="title" content="{{ job_instance.title }}"/>
+    {% endif %}
+
+    {# SEO DESCRIPTION   #}
+    {% if job_instance.seo_description %}
+        <meta name="description" content="{{ job_instance.seo_description }}"/>
+    {% else %}
+        <meta name="description"
+              content="{{ job_instance.about_job }} "/>
+    {% endif %}
+
+    {# SEO KEYWORDS   #}
+    {% if job_instance.seo_keywords %}
+        <meta name="keywords" content="{{ job_instance.seo_keywords }}"/>
+    {% endif %}
+
+
+
+
+    <meta property="og:url" content="{{ request.path }}"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="{{ job_instance.title }}"/>
+    <meta property="og:description"
+          content="{{ job_instance.salary|floatformat:'g' }} руб / {{ job_instance.salary_condition.title }}. График: {{ job_instance.work_schedule.title }}. Компания: {{ job_instance.company.name }} "/>
+    {% if job_instance.seo_image %}
+        <meta property="og:image" content="{{ job_instance.seo_image.url }}"/>
+    {% else %}
+        <meta property="og:image" content="/static/industrial/images/service-1-icon.png"/>
+    {% endif %}
+
+{% endblock %}
+
+{% block page_content %}
+    <section style="padding-top: 100px">
+        <div class="pxp-container">
+
+
+            <div class="pxp-single-job-content mt-4 mt-lg-5">
+                <div class="row">
+                    <div class="col-lg-7 col-xl-8 col-xxl-9">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-xl-8 col-xxl-6">
+                                <h1>{{ job_instance.title }}</h1>
+                                {% if job_instance.qualification != None %}
+                                    <h4>{{ job_instance.qualification }}</h4>
+                                {% endif %}
+                                <div class="pxp-single-job-company-location">
+                                    <span class="fa fa-globe"></span>
+                                    <a
+                                            href="{% url 'bulletin_board:jobs_catalog' %}?location={{ job_instance.location.id }}"
+                                            class="pxp-single-job-company">
+                                        {{ job_instance.location.city }}
+                                    </a>
+
+
+                                </div>
+                                <br>
+
+                                <h6 href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+                                    <span class="fa fa-calendar"></span>
+                                    <b>тип занятости:</b>
+                                    {{ job_instance.employment_type.title }}
+                                </h6>
+                                <h6 href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+                                    <span class="fa fa-clock-o "></span>
+                                    <b>график работы:</b>
+                                    {{ job_instance.work_schedule.title }}
+                                </h6>
+                                <h6 href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+                                    <b>опыт работы:</b> {{ job_instance.experience.title }}
+                                </h6>
+
+
+                                <a href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <div class="pxp-single-job-options mt-4 col-xl-0">
+                                    <h2 href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+                                        <b> {{ job_instance.salary|floatformat:"g" }} <span
+                                                class="fa fa-rub"></span></b>
+                                        / {{ job_instance.salary_condition.title }}
+                                    </h2>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4 justify-content-between align-items-center">
+                            <div class="col-6">
+
+                                <a
+                                        href="{% url 'bulletin_board:jobs_catalog' %}?category={{ job_instance.category.id }}"
+                                        class="pxp-single-job-category"
+                                >
+                                    <div class="pxp-single-job-category-icon">
+                                        <span class="{{ job_instance.category.icon_code }}"></span>
+                                    </div>
+                                    <div class="pxp-single-job-category-label">
+                                        {{ job_instance.category.title }}
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <div class="pxp-single-job-date pxp-text-light">
+                                    от {{ job_instance.published_at_simple }}</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 mt-lg-5">
+                            <div class="pxp-single-candidate-skills">
+                                <ul class="list-unstyled">
+                                    {% for tag in job_instance.tags.all %}
+                                        <li>{{ tag.title }}</li>
+                                    {% endfor %}
+
+                                    {% for ind_tag in job_instance.ind_tags.all %}
+                                        <li>{{ ind_tag.title }}</li>
+                                    {% endfor %}
+
+                                </ul>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="accordion pxp-faqs-accordion" id="pxpFAQsAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="pxpFAQsHeader1">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#pxpCollapseFAQs1" aria-expanded="false"
+                                            aria-controls="pxpCollapseFAQs1">
+                                        <b>Компания предлагает:</b>
+                                    </button>
+                                </h2>
+                                <div id="pxpCollapseFAQs1" class="accordion-collapse" aria-labelledby="pxpFAQsHeader1"
+                                     data-bs-parent="#pxpFAQsAccordion" style="">
+                                    <div class="accordion-body" style="word-wrap: break-word; padding-right: 2%;">
+                                        {{ job_instance.company_offers | linebreaksbr }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="pxpFAQsHeader2">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#pxpCollapseFAQs2" aria-expanded="false"
+                                            aria-controls="pxpCollapseFAQs2">
+                                        <b>Обязанности</b>
+                                    </button>
+                                </h2>
+                                <div id="pxpCollapseFAQs2" class="accordion-collapse collapse"
+                                     aria-labelledby="pxpFAQsHeader2" data-bs-parent="#pxpFAQsAccordion">
+                                    <div class="accordion-body" style="word-wrap: break-word; padding-right: 2%;">
+                                        {{ job_instance.about_job | linebreaksbr }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="pxpFAQsHeader3">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#pxpCollapseFAQs3" aria-expanded="false"
+                                            aria-controls="pxpCollapseFAQs3">
+                                        <b> Требования к соискателю</b>
+                                    </button>
+                                </h2>
+                                <div id="pxpCollapseFAQs3" class="accordion-collapse collapse"
+                                     aria-labelledby="pxpFAQsHeader3" data-bs-parent="#pxpFAQsAccordion">
+                                    <div class="accordion-body" style="word-wrap: break-word; padding-right: 2%;">
+                                        {{ job_instance.requirements | linebreaksbr }}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="col-lg-5 col-xl-4 col-xxl-3">
+
+                        <div class="mt-3 mt-lg-4 pxp-single-job-side-panel">
+                            <div class="pxp-single-job-side-company">
+                                <div class="pxp-single-job-side-company-logo pxp-cover"
+                                        {% if job_instance.company.brand_logo %}
+                                     style="background-image: url({{ job_instance.company.brand_logo.url }});"
+                                        {% else %}
+                                     style="background-image: url({% system_image_company_default_logo_url %});"
+                                        {% endif %}
+                                ></div>
+                                <div class="pxp-single-job-side-company-profile">
+                                    <div class="pxp-single-job-side-company-name">
+                                        {{ job_instance.company.name }}
+                                    </div>
+                                    <a href="{% url 'bulletin_board:company_view' company_id=job_instance.company.id %}">
+                                        ИНН: {{ job_instance.company.inn }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            {% if job_instance.recruiter_phone != 'None' %}
+                                <div class="mt-4">
+                                    <!--                                <div class="pxp-single-job-side-info-label pxp-text-light">Телефон</div>-->
+                                    <!--                                <div class="pxp-single-job-side-info-data">-->
+                                    <!--                                    {{ job_instance.recruiter_phone }}-->
+                                    <!--                                </div>-->
+                                </div>
+                                <div class="mt-4">
+                            {% endif %}
+
+                            <!--                                <div class="mt-4">-->
+                            <!--                                    <div class="pxp-single-job-side-info-data">-->
+                            <!--                                        <div class="pxp-single-job-side-info-label pxp-text-light">Предпочитаемые вид-->
+                            <!--                                            связи-->
+                            <!--                                        </div>-->
+                            <!--                                        <ul class="list-unstyled pxp-single-job-side-info-social">-->
+                            <!--                                            <li><a href="#">-->
+                            <!--                                                <span class="{{ job_instance.recruiter_communication_method.icon_code }}"></span>-->
+                            <!--                                            </a>-->
+                            <!--                                            </li>-->
+                            <!--                                        </ul>-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            </div>
+                            {% if job_instance.recruiter_email != 'None' %}
+                                <div class="mt-4">
+                                    <div class="pxp-single-job-side-info-label pxp-text-light">Email</div>
+                                    <div class="pxp-single-job-side-info-data"><span class="fa fa-envelope"></span>
+                                        {{ job_instance.recruiter_email }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if job_instance.company.address != 'None' %}
+                                <div class="mt-4">
+                                    <div class="pxp-single-job-side-info-label pxp-text-light">Адрес</div>
+                                    <div class="pxp-single-job-side-info-data">
+                                        {{ job_instance.company.address }}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <div class="mt-4">
+
+                                <br>
+                                <a data-bs-toggle="modal" href="#pxp-otklik"
+                                   class="btn rounded-pill pxp-section-cta d-block">Откликнуться</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="modal fade pxp-user-modal" id="pxp-otklik" aria-labelledby="signinModal" tabindex="-1"
+         aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="close_modal_button" type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="pxp-user-modal-fig text-center">
+                        <img src="{% static 'industrial/images/signup-big-fig.png' %}" alt="Sign in">
+                    </div>
+                    <h5 class="modal-title text-center mt-4" id="signinModal">Откликнуться</h5>
+
+
+                    <div class="form-floating mb-3">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="pxp-signin-phone"
+                        >
+                        <label for="pxp-signin-phone">Введите номер телефона</label>
+                        <span class="fa fa-phone"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="apply_name"
+                                placeholder="Email address">
+                        <label for="pxp-signin-name">Как Вас зовут?</label>
+                        <span class="fa fa-user"></span>
+                    </div>
+
+                    <!--                <div class="form-floating mb-3">-->
+                    <!--                    <select id="apply_communication_method" class="form-control" name="communication_method">-->
+                    <!--                        {% for communication_method in communication_methods %}-->
+                        <!--                        <option value="{{ communication_method.id }}">{{ communication_method.title }}</option>-->
+                        <!--                        {% endfor %}-->
+
+                    <!--                    </select>-->
+                    <!--                    <label for="pxp-signin-email">Предпочитаемый способ связи</label>-->
+                    <!--                    <span class="fa fa-phone"></span>-->
+                    <!--                </div>-->
+
+                    <button
+                            onclick="send_otklik()"
+                            class="btn rounded-pill pxp-modal-cta w-100"
+                    >Откликнуться
+                    </button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bb d-block d-sm-none">
+        <div class="pxp-container">
+            <div class="pxp-header-container">
+                <div class="mt-0 col-12 col-lg-auto">
+                    <a data-bs-toggle="modal" href="#pxp-otklik" class="btn rounded-pill pxp-section-cta"
+                       style="width: 100%;">Откликнуться</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .bb {
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0px -10px 30px rgb(0 0 0 / 16%);
+            position: fixed;
+            top: 91%;
+            right: 0;
+            left: 0;
+            z-index: 1030;
+        }
+    </style>
+
+    <script>
+        const api_apply_url = "{% url 'bulletin_board:apply_job' job_id=job_instance.id %}";
+
+        async function send_otklik(event) {
+            const phone = document.getElementById('pxp-signin-phone').value
+            const name = document.getElementById('apply_name').value
+            const communication_method = 1
+            // const communication_method = document.getElementById('apply_communication_method').value
+            // console.log(communication_method)
+            if (phone.length > 0 && name.length > 0) {
+                document.getElementById("close_modal_button").click()
+                let res = await fetch(
+                    api_apply_url,
+                    {
+                        method: 'post',
+                        body: JSON.stringify(
+                            {
+                                name,
+                                phone,
+                                // communication_method
+                            }
+                        )
+                    }
+                )
+
+                // res = await res.json()
+                // if (res.id > -1) {
+                //     document.getElementById("close_modal_button").click()
+                // }
+            }
+
+        }
+    </script>
+
+{% endblock %}

@@ -1,0 +1,250 @@
+{% extends 'industrial/base.html' %}
+{% load static %}
+{% load industrial_tags %}
+
+{% block page_title %}Личный кабинет{% endblock %}
+
+{% block page_content %}
+<h1>Добро пожаловать!</h1>
+<p class="pxp-text-light">Платформа Jobox.ru - инструмент для поиска
+    специалистов для Вашего бизнеса.</p>
+<span id="dash_app">
+    <div class="row justify-content-between align-content-center">
+        <div class="row justify-content-between align-content-center">
+            <div class="col-auto order-2 order-sm-1">
+                <div class="pxp-company-dashboard-jobs-bulk-actions mb-3">
+                    <a href="{% url 'industrial:profile' %}" class="btn ms-2">Заполните профиль компании!</a>
+                </div>
+            </div>
+            <div class="col-auto order-1 order-sm-2">
+                <div class="pxp-company-dashboard-jobs-search mb-3">
+                    <div class="pxp-company-dashboard-jobs-search-results me-3">
+                        Баланс: {{ transaction_totals.ruble_total|floatformat:'0g' }}
+                        {% if not transaction_totals.ruble_total %}0{% endif %} руб.
+                        /
+                        бонусы:
+                        {{ transaction_totals.bonus_point_total|floatformat:'0g' }}
+                        {% if not transaction_totals.bonus_point_total %}{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-4 mt-lg-5 align-items-center">
+        <div class="col-sm-6 col-xxl-3">
+            <div class="pxp-dashboard-stats-card bg-primary bg-opacity-10 mb-3 mb-xxl-0">
+
+                <div class="pxp-dashboard-stats-card-icon text-primary">
+                    <span class="fa fa-file-text-o"></span>
+                </div>
+                <div class="pxp-dashboard-stats-card-info">
+                    <div class="pxp-dashboard-stats-card-info-number">
+                        <a href="{% url 'industrial:jobs_list' %}"
+                           style="color: var(--pxpTextColor)">
+                           {{ short_statistic_info.published_jobs }}
+                        </a>
+                    </div>
+                    <div id="vac_on_pub" class="pxp-dashboard-stats-card-info-text pxp-text-light">Опубликованных вакансий</div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-6 col-xxl-3">
+            <div class="pxp-dashboard-stats-card bg-primary bg-opacity-10 mb-3 mb-xxl-0">
+
+                <div class="pxp-dashboard-stats-card-icon text-success">
+                    <span class="fa fa-user-circle-o"></span>
+                </div>
+
+
+                <div class="pxp-dashboard-stats-card-info">
+                    <div class="pxp-dashboard-stats-card-info-number">
+                        <a href="{% url 'industrial:jobs_list' %}"
+                           style="color: var(--pxpTextColor)">
+                            {{ short_statistic_info.moderation_jobs }}
+                        </a>
+                    </div>
+                    <div id="vac_on_mod" class="pxp-dashboard-stats-card-info-text pxp-text-light">Вакансии на модерации</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xxl-3">
+            <div class="pxp-dashboard-stats-card bg-primary bg-opacity-10 mb-3 mb-xxl-0">
+                <div class="pxp-dashboard-stats-card-icon text-warning">
+                    <span class="fa fa-envelope-o"></span>
+                </div>
+                <div class="pxp-dashboard-stats-card-info">
+                    <div class="pxp-dashboard-stats-card-info-number">
+                        <a href="{% url 'industrial:candidates' %}"
+                           style="color: var(--pxpTextColor)">
+                            {{ short_statistic_info.job_responses_count }}
+                        </a>
+                    </div>
+                    <div class="pxp-dashboard-stats-card-info-text pxp-text-light">Откликов</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xxl-3">
+            <div class="pxp-dashboard-stats-card bg-primary bg-opacity-10 mb-3 mb-xxl-0">
+                <div class="pxp-dashboard-stats-card-icon text-danger">
+                    <span class="fa fa-gift"></span>
+                </div>
+                <div class="pxp-dashboard-stats-card-info">
+                    <div class="pxp-dashboard-stats-card-info-number">
+                        {{ transaction_totals.bonus_point_total|floatformat:'0g' }}
+                        {% if not transaction_totals.bonus_point_total %}{% endif %}
+                    </div>
+                    <div class="pxp-dashboard-stats-card-info-text pxp-text-light">Бонусных размещений</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mt-4 mt-lg-5">
+        <div class="col-xxl-12">
+            <h2>Реферальная программа</h2>
+            <div class="pxp-dashboard-notifications">
+                <div class="pxp-dashboard-notifications-item mb-3">
+                    <div class="pxp-dashboard-notifications-item-left">
+                        <div class="pxp-dashboard-notifications-item-type"><span
+                                class="fa fa-briefcase"></span></div>
+                        <div class="pxp-dashboard-notifications-item-message">
+                            <p href="single-candidate-1.html">Ваша реферальная ссылка:</p>
+                            <p id="referalink">
+                                https://myjobox.ru/industrial/reg-{{ user.industrial_worker.company.ref_code }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="pxp-dashboard-notifications-item-right d-none d-sm-block">
+                        <a onclick="reff_action();" href="#" class="btn rounded-pill pxp-nav-btn"><span class="fa fa-copy"> Скопировать в буфер</span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="pxp-dashboard-notifications-item-right d-sm-block d-sm-none">
+                <a onclick="reff_action();" href="#" class="btn rounded-pill pxp-nav-btn"><span class="fa fa-copy"> Скопировать в буфер</span></a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mt-4 mt-lg-5">
+        <h5>Приглашенные вами контрагенты:</h5>
+        {% for ref in ref_inst %}
+        <div class="row">
+            <div class="col-6 d-none d-sm-block">
+                {{ ref.referral.name }}
+
+            </div>
+            <div class="col-6 d-none d-sm-block">
+                <span class="fa fa-gift"> </span>&nbsp;Бонус: +1
+            </div>
+        </div>
+        <div class="row d-sm-none">
+            <div class="col-10">
+                <div class="pxp-company-dashboard-candidate-name">{{ ref.referral.name }}</div>
+            </div>
+            <div class="col-2">
+                <div class="pxp-company-dashboard-candidate-location"><span class="fa fa-gift"></span>: 1</div>
+            </div>
+        </div>
+        {% endfor %}
+
+<!--        {% for ref in ref_inst %}-->
+<!--        <div class="table-responsive">-->
+<!--            <table class="table align-middle">-->
+<!--                <tbody>-->
+<!--                <tr>-->
+<!--                    <td style="width: 40%;">-->
+<!--                        <div class="pxp-company-dashboard-candidate-name">{{ ref.referral.name }}</div>-->
+<!--                    </td>-->
+<!--                    <td>-->
+<!--                        <div class="pxp-company-dashboard-candidate-location"><span class="fa fa-gift"></span>Бонус: +1</div>-->
+
+
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+<!--        {% endfor %}-->
+    </div>
+</span>
+
+
+<div class="modal fade pxp-user-modal" id="reff_modal" aria-hidden="true"
+     aria-labelledby="need_to_pay_warning" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-title text-center mt-4">Ссылка скопирована в буфер обмена</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function reff_action(){
+        navigator.clipboard.writeText(document.querySelectorAll('#referalink')[0].innerText.trim())
+        const ReffModal= new bootstrap.Modal(document.getElementById('reff_modal'))
+        ReffModal.show()
+
+    }
+</script>
+
+<script type="text/javascript">
+// var call_modal = {a: Boolean('{{ call_modal }}'.toLowerCase())}
+const url_jobs_list_api = "{% url 'industrial:jobs_list_api' %}";
+
+var dash_app = new Vue({
+    el: '#dash_app',
+    delimiters: ['[%', '%]'],
+    data: {call_modal: '', jobs_list: [], search_title: '', status: '',},
+    methods: {
+        load_jobs: async function () {
+            const res = await fetch(
+                url_jobs_list_api,
+                {
+                    method: 'post',
+                    body: JSON.stringify(
+                        {
+                            title: this.search_title,
+                            status: this.status,
+                        }
+                    )
+                }
+            )
+            this.jobs_list = (await res.json()).jobs_list
+            console.log(this.jobs_list)
+        }
+    },
+    watch: {
+        jobs_list: function () {
+            const myModal = new bootstrap.Modal(document.getElementById('pxp-edit-admin-modal'))
+            var show_admin_modal = false;
+            this.jobs_list.forEach(
+                function (job) {
+                    window.console.log(job.call_modal)
+                    if (job.call_modal === 'true') {
+                        show_admin_modal = true
+                    }
+                }
+            )
+            if (show_admin_modal) {
+                myModal.show()
+            }
+        }
+    },
+    created: async function () {
+        await this.load_jobs()
+    }
+})
+</script>
+
+{% endblock %}

@@ -1,0 +1,598 @@
+<!doctype html>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+{% extends 'industrial/baseapp.html' %}
+{% load static %}
+{% load industrial_tags %}
+
+{% block page_title %}Разместить резюме{% endblock %}
+
+{% block page_content %}
+
+{% if content.app_inst.have_resume %}
+    <h1 style="text-align: center">Редактировать резюме</h1>
+{% else %}
+    <h1 style="text-align: center; margin-top: 1%;" >Создать резюме</h1>
+{% endif %}
+
+{% if content.valid_error %}
+    <p style="text-align: center; color: red;">Данные введены не корректно!</p>
+{% endif %}
+
+<form id="app_form" method="post">
+
+{% csrf_token %}
+    <div class="container">
+        <div class="row mt-4 mt-lg-7">
+            <div class="col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-company-first_name" class="form-label">Имя</label>
+                    <input
+                        type="text"
+                        id="pxp-company-first_name"
+                        class="form-control input__requirements"
+                        placeholder="Например Василий"
+                        name="first_name"
+                        required
+                        pattern="^[A-Za-zА-Яа-яЁё][A-Za-zА-Яа-яЁё\s-]+$"
+                        title="Поле должно содержать и начинаться с символов русского или латинского алфавита, может включать в себя пробелы и знак дефиса"
+                        minlength="2"
+                        maxlength="30"
+                        {% if content.app_inst.have_resume %}
+                        value="{{ content.app_inst.first_name }}"
+                        {% endif %}
+                    >
+                </div>
+            </div>
+            <div class="col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-company-second-name" class="form-label">Фамилия</label>
+                    <input
+                        type="text"
+                        id="pxp-company-second-name"
+                        class="form-control input__requirements"
+                        placeholder="Например Петров"
+                        name="second_name"
+                        required
+                        pattern="^[A-Za-zА-Яа-яЁё][A-Za-zА-Яа-яЁё\s-]+$"
+                        title="Поле должно содержать и начинаться с символов русского или латинского алфавита, может включать в себя пробелы и знак дефиса"
+                        minlength="2"
+                        maxlength="30"
+                        {% if content.app_inst.have_resume %}
+                        value="{{ content.app_inst.second_name }}"
+                        {% endif %}
+                    >
+                </div>
+            </div>
+
+            <div class="col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-company-middle-name" class="form-label">Отчество</label>
+                    <input
+                        type="text"
+                        id="pxp-company-middle-name"
+                        class="form-control input__requirements"
+                        placeholder="Например Анатольевич"
+                        name="middle_name"
+                        pattern="^[A-Za-zА-Яа-яЁё][A-Za-zА-Яа-яЁё\s-]+$"
+                        title="Поле должно содержать и начинаться с символов русского или латинского алфавита, может включать в себя пробелы и знак дефиса"
+                        minlength="2"
+                        maxlength="30"
+                        {% if content.app_inst.have_resume %}
+                        value="{{ content.app_inst.middle_name }}"
+                        {% endif %}
+                    >
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4 mt-lg-7">
+            <div class="col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-company-name-app" class="form-label">Профессия или должность</label>
+                    <input
+                        type="text"
+                        id="pxp-company-name-app"
+                        class="form-control input__requirements"
+                        placeholder="Например Слесарь или Архитектор"
+                        name="name_app"
+                        pattern="^[A-Za-zА-Яа-яЁё][A-Za-zА-Яа-яЁё\s-]+$"
+                        title="Поле должно содержать и начинаться с символов русского или латинского алфавита, может включать в себя пробелы и знак дефиса"
+                        minlength="2"
+                        maxlength="30"
+                        required
+                        {% if content.app_inst.have_resume %}
+                        value="{{ content.app_inst.name_app }}"
+                        {% endif %}
+                    >
+                </div>
+
+            </div>
+            <div class="col-md-6 col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-company-qualification" class="form-label">Квалификация или разряд</label>
+                    <input
+                        type="text"
+                        id="pxp-company-qualification"
+                        class="form-control"
+                        placeholder="Например: 3 разряд или middle"
+                        minlength="2"
+                        maxlength="20"
+                        pattern="^[A-Za-z0-9А-Яа-яЁё][A-Za-z0-9А-Яа-яЁё\s-]+$"
+                        title="Поле должно содержать и начинаться с символов русского, латинского алфавита или цифр, может включать в себя пробелы и знак дефиса"
+                        name="qualification"
+                        {% if content.app_inst.have_resume %}
+                        value="{{ content.app_inst.qualification }}"
+                        {% endif %}
+                    >
+                </div>
+            </div>
+            <div class="col-md-6 col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-candidate-date_of_birth" class="form-label">Дата рождения</label>
+                    <input
+                        type="date"
+                        min="1900-01-01" max="2022-01-01"
+                        id="pxp-candidate-date_of_birth"
+                        class="form-control form-select"
+                        placeholder="Дата рождения"
+                        name="date_of_birth"
+                        required
+                        {% if content.app_inst.have_resume %}
+                            value="{{ content.data }}"
+                        {% endif %}
+                    >
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-company-experience" class="form-label">Опыт работы</label>
+                    <select id="pxp-company-experience" class="form-select" required name="experience">
+                        <option value="{{ experiences.0.id }}" selected="selected" hidden="">{{ experiences.0 }}</option>
+                        {% for experience in experiences %}
+                            <option
+                                     {% if content.app_inst.have_resume %}
+                                        {% if content.app_inst.experience.id == experience.id %}
+                                            selected=""
+                                        {% endif %}
+                                    {% endif %}
+                                            value="{{ experience.id }}"
+                            >{{ experience.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+            <div class="col-md-6 col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-company-type-level" class="form-label">Тип занятости</label>
+                    <select id="pxp-company-type-level" class="form-select" required name="employment_type">
+                    <option value="{{ employment_types.0.id }}" selected="selected" hidden="">{{ employment_types.0 }}</option>
+                        {% for employment_type in employment_types %}
+                            <option
+                                    {% if content.app_inst.have_resume %}
+                                        {% if content.app_inst.employment_type.id == employment_type.id %}
+                                            selected=""
+                                        {% endif %}
+                                    {% endif %}
+                                            value="{{ employment_type.id }}"
+                            >{{ employment_type.title }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 col-xxl-4">
+
+                <div class="mb-3">
+                    <label for="pxp-company-work_schedule" class="form-label">График работы</label>
+                    <select id="pxp-company-work_schedule" class="form-select" required name="work_schedule">
+                        <option value="{{ work_schedules.0.id }}" selected="selected" hidden="">{{ work_schedules.0 }}</option>
+                        {% for work_schedule in work_schedules %}
+                            <option
+                                    {% if content.app_inst.have_resume %}
+                                        {% if content.app_inst.work_schedule.id == work_schedule.id %}
+                                            selected=""
+                                        {% endif %}
+                                    {% endif %}
+
+                                            value="{{ work_schedule.id }}"
+                            >{{ work_schedule.title }}</option>
+                        {% endfor %}
+                    </select>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-app-location" class="form-label">"Ищу работу в (город, населенный пункт в РФ)"</label>
+                    <select id="pxp-app-location" class="form-select select2-location" name="location" required >
+                        <option value="" hidden="">Выбрать город</option>
+                        {% for location in locations %}
+                            <option
+                                    {% if content.app_inst.have_resume %}
+                                        {% if content.app_inst.location.id == location.id %}
+                                            selected=""
+                                        {% endif %}
+                                    {% endif %}
+                                            value="{{ location.id }}"
+                            >{{ location.city }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 col-xxl-4">
+                <div class="mb-3">
+                    <div class="mb-3">
+                        <label for="pxp-company-salary" class="form-label">Ожидаемая зарплата</label>
+                        <input
+                            type="number"
+                            id="pxp-company-salary"
+                            class="form-control"
+                            placeholder="Сумма в руб."
+                            name="salary"
+                            required
+                            {% if content.app_inst.have_resume %}
+                            value="{{ content.app_inst.salary }}"
+                            {% endif %}
+                            max="10000000"
+                        >
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xxl-4">
+                <div class="mb-3">
+                    <label for="pxp-company-job-type" class="form-label">Доп. условие по зарплате {{ salary_conditions.3 }}</label>
+                    <select id="pxp-company-job-type" class="form-select" name="salary_condition" required>
+                        <option value="{{ salary_conditions.3.id }}" selected="selected" hidden="">{{ salary_conditions.3 }}</option>
+                        {% for salary_condition in salary_conditions %}
+                            <option
+                                    {% if content.app_inst.have_resume %}
+                                        {% if content.app_inst.salary_condition.id == salary_condition.id %}
+                                            selected=""
+                                        {% endif %}
+                                    {% endif %}
+                                    value="{{ salary_condition.id }}"
+
+                            >{{ salary_condition.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-xxl-12">
+                <div class="mb-3">
+                    <h4>Ключевые навыки</h4>
+<!--                    <p class="pxp-text-light">Тэги запроса. Особые условия. Cпециальные предложения.</p>-->
+                    {% for tag in tags %}
+                        <div class="form-check form-check-inline">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="selected_tag_{{ tag.id }}"
+                                value="{{ tag.id }}"
+                                name="selected_tag_{{ tag.id }}"
+
+                                {% if content.app_inst.have_resume %}
+                                    {% for selected_tag in content.app_inst.tags_app.all %}
+                                        {% if selected_tag.id == tag.id %}
+                                checked=""
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            >
+                            <label class="form-check-label" for="selected_tag_{{ tag.id }}">{{ tag.title }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mt-4 mt-lg-7" style="margin-bottom: 3%;">
+            <div class="col-md-3 col-xxl-12">
+                <div class="mb-3">
+                    <br>
+                    <label for="pxp-company-about_app" class="form-label"><h4>Дополнительная информация о себе</h4></label>
+                    <textarea
+
+                            style="padding: 3px; white-space: pre-line;"
+                            class="form-control"
+                            id="pxp-company-about_app"
+                            placeholder="Полезные качества, знания, увлечения и другая информация, полезная работодателю"
+                            name="about_app"
+                            required
+                    >
+                    {% if content.app_inst.have_resume %}
+                    {{ content.app_inst.about_app }}
+                    {% endif %}</textarea>
+                </div>
+            </div>
+        </div>
+        {% if content.app_inst.have_resume %}
+        <div class="row mt-4 mt-lg-7" style="margin-bottom: 3%;">
+            <div class="col-md-3 col-xxl-12 col-sm-12">
+                <div class="mb-3">
+
+                    {% include 'industrial/components/app_table.html' %}
+                </div>
+            </div>
+        </div>
+
+
+        <div style="display: flex">
+            <div class="col-auto">
+                <a class="btn rounded-pill pxp-user-nav-trigger pxp-on-light" data-bs-toggle="modal"
+                   href="#add-experience-modal" role="button"
+                   style="border: 1px solid rgb(0 0 0 / 50%);color: #000; ">Добавить место работы</a>
+            </div>
+
+            <div class="col-auto">
+                <a class="btn rounded-pill pxp-user-nav-trigger pxp-on-light" data-bs-toggle="modal"
+                   href="#add-education-modal" role="button"
+                   style="border: 1px solid rgb(0 0 0 / 50%);color: #000; ">Добавить образование</a>
+            </div>
+
+            <div class="col-auto">
+                <button class="btn rounded-pill pxp-user-nav-trigger pxp-on-light" type="button" id="del_edu"
+                style="border: 1px solid rgb(0 0 0 / 50%);color: #000;" onclick="delete_edu();">Очистить образование</button>
+            </div>
+            <div class="col-auto">
+                <button class="btn rounded-pill pxp-user-nav-trigger pxp-on-light" type="button" id="del_exp"
+                style="border: 1px solid rgb(0 0 0 / 50%);color: #000;" onclick="delete_exp();">Очистить опыт работы</button>
+            </div>
+
+        </div>
+        {% endif %}
+
+
+        <div class="row">
+            <div class="mt-4 mt-lg-5 col-md-6 col-xxl-9">
+                {% if content.app_inst.have_resume %}
+                <button type="submit" class="btn rounded-pill pxp-section-cta">
+                    Сохранить
+                </button>
+                {% else %}
+                <button type="submit" class="btn rounded-pill pxp-section-cta">
+                    Продолжить
+                </button>
+                {% endif %}
+            </div>
+            <div class="col-md-6 col-xxl-3">
+                <div class="mb-3">
+                    <div class="mb-3">
+                        <label for="recruiter_phone" class="form-label"><h4>Номер телефона</h4></label>
+                        <input
+                            type="tel"
+                            id="recruiter_phone"
+                            class="form-control"
+                            placeholder="+7 (900) 000-00-00"
+                            name="tel"
+                            required
+                            value="{{ content.app_inst.tel }}"
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<span>
+    <div class="modal fade pxp-user-modal" id="add-experience-modal" aria-hidden="true" aria-labelledby="EditAdminModal"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="modal-title text-center mt-4">Добавить место работы</h5>
+                    <form class="mt-4" method="post" action="{% url 'industrial:experience' %}">
+                        {% csrf_token %}
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-experience-name" placeholder="Организация"
+{#                                   pattern="^[A-Za-z0-9А-Яа-яЁё][A-Za-z0-9А-Яа-яЁё\s-]+$"#}
+{#                                   title="Поле должно содержать и начинаться с символов русского, латинского алфавита или цифр, может включать в себя пробелы и знак дефиса"#}
+                                   name="name" required maxlength="50">
+                            <label for="pxp-experience-name">Организация</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-experience-position" placeholder="Занимаемая должность"
+{#                                   pattern="^[A-Za-z0-9А-Яа-яЁё][A-Za-z0-9А-Яа-яЁё\s-]+$"#}
+{#                                   title="Поле должно содержать и начинаться с символов русского, латинского алфавита или цифр, может включать в себя пробелы и знак дефиса"#}
+                                   name="position" required maxlength="50">
+                            <label for="pxp-experience-position">Занимаемая должность</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-experience-function" placeholder="Обязанности"
+{#                                   pattern="^[A-Za-z0-9А-Яа-яЁё][A-Za-z0-9А-Яа-яЁё\s-]+$"#}
+{#                                   title="Поле должно содержать и начинаться с символов русского, латинского алфавита или цифр, может включать в себя пробелы и знак дефиса"#}
+                                   name="function" required maxlength="299">
+                            <label for="pxp-experience-function">Обязанности</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="pxp-experience-start" placeholder="Начало работы"
+                                   name="start_data" required>
+                            <label for="pxp-experience-start">Начало работы</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="pxp-experience-end" placeholder="Конец работы"
+                                   name="end_data" required>
+                            <label for="pxp-experience-end">Конец работы</label>
+                        </div>
+
+
+                        <button type="submit" class="btn rounded-pill pxp-modal-cta w-100" data-bs-dismiss="modal">
+                            Сохранить
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</span>
+
+
+<span>
+    <div class="modal fade pxp-user-modal" id="add-education-modal" aria-hidden="true" aria-labelledby="EditAdminModal"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="modal-title text-center mt-4">Добавить учебное заведение</h5>
+                    <form class="mt-4" id="education_form" method="post" action="{% url 'industrial:education' %}">
+                        {% csrf_token %}
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-education-name" placeholder="Учебное заведение"
+{#                                   pattern="^[A-Za-z0-9А-Яа-яЁё]"#}
+{#                                   title="Поле должно содержать и начинаться с символов русского, латинского алфавита или цифр, может включать в себя пробелы и знак дефиса"#}
+                                   name="name" required maxlength="50">
+                            <label for="pxp-education-name">Учебное заведение</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-education-faculty" placeholder="Факультет"
+{#                                   pattern="^[A-Za-z0-9А-Яа-яЁё][A-Za-z0-9А-Яа-яЁё\s-]+$"#}
+{#                                   title="Поле должно содержать и начинаться с символов русского, латинского алфавита или цифр, может включать в себя пробелы и знак дефиса"#}
+                                   name="faculty" required maxlength="50">
+                            <label for="pxp-education-faculty">Факультет</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-education-specialization" placeholder="Специальность"
+{#                                   pattern="^[A-Za-z0-9А-Яа-яЁё][A-Za-z0-9А-Яа-яЁё\s-]+$"#}
+{#                                   title="Поле должно содержать и начинаться с символов русского, латинского алфавита или цифр, может включать в себя пробелы и знак дефиса"#}
+                                   name="specialization" required maxlength="50">
+
+                            <label for="pxp-education-specialization">Специальность</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <select id="pxp-company-job-category" class="form-control" name="level" >
+                            <option value="" hidden="" selected="">Уровень образования</option>
+                            {% for l in level %}
+                                <option
+                                        {% if education_inst %}
+                                            {% if education_inst.level.id == level.id %}
+                                                selected="selected"
+                                            {% endif %}
+                                        {% endif %}
+                                                value="{{ l.id }}"
+                                >{{ l.title }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="pxp-education-start" placeholder="Начало обучения"
+                                   name="start_data" required>
+                            <label for="pxp-education-start">Начало обучения</label>
+                        </div>
+
+                        <div id="mark" class="form-floating mb-3">
+                            <input type="date" class="form-control" id="pxp-education-end" placeholder="Конец обучения"
+                                   name="end_data" required>
+                            <label for="pxp-education-end">Конец обучения</label>
+                        </div>
+
+
+                        <button type="submit"  id='education_post' class="btn rounded-pill pxp-modal-cta w-100" data-bs-dismiss="modal">
+                            Сохранить
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</span>
+
+
+<script>
+    function sleep(millis) {
+    var t = (new Date()).getTime();
+    var i = 0;
+    while (((new Date()).getTime() - t) < millis) {
+        i++;
+    }
+}
+
+
+    var host = window.location.protocol + "//" + window.location.host;
+    console.log('host', host)
+    function delete_exp(){
+        const data = {"data": "experience"}
+        const response = fetch(`${host}/delete_experience/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(data)
+        });
+        sleep(500)
+        location. reload();
+
+
+    }
+
+
+    function delete_edu(){
+        const data = {"data": "education"}
+        const response = fetch(`${host}/delete_education/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(data)
+        });
+        sleep(500)
+        location. reload();
+    }
+</script>
+
+
+{% if content.app_inst.have_resume and not content.app_inst.have_education %}
+<script>
+    window.scrollTo(0, window.outerHeight);
+    var myModal3 = new bootstrap.Modal(document.getElementById('add-education-modal'));
+    myModal3.show()
+</script>
+{% endif %}
+
+{% if content.app_inst.have_resume and content.app_inst.have_education %}
+<script> window.scrollTo(0, window.outerHeight); </script>
+{% endif %}
+
+{% if content.app_inst.have_resume and content.app_inst.have_education and not content.app_inst.have_experience %}
+<script>
+    var myModal4 = new bootstrap.Modal(document.getElementById('add-experience-modal'));
+    myModal4.show()
+</script>
+{% endif %}
+
+
+{% endblock %}

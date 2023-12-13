@@ -1,0 +1,168 @@
+{% load static %}
+<button class="btn ms-2 btn-primary" data-bs-toggle="modal" href="#pxp-pay-modal">Пополнить лицевой счет</button>
+    <div class="modal fade pxp-user-modal" id="pxp-pay-modal" aria-labelledby="signinModal" tabindex="-1"
+         style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="modal-title text-center mt-4" id="signinModal">Пополнение лицевого счета
+                        №{{ company.personal_account }}</h5>
+                    <p class=" text-center mt-4" id="signinModal">
+                        На основании <a href="{% url 'industrial:user_agreement' %}">договора оферты</a>
+                    </p>
+
+
+                    <div class="mt-4">
+                        <div class="form-floating mb-3">
+                            <input
+                                    type="number"
+                                    class="form-control"
+                                    id="pxp-signin-email"
+                                    placeholder="сумма пополнения"
+                                    v-model="invoice_amount"
+                            >
+                            <label for="pxp-signin-email">Сумма пополнения</label>
+                            <span class="fa fa-rub"></span>
+                        </div>
+                        <div class="d-flex p-3" style="justify-content: space-between; align-content: center;">
+
+                            <button
+                                    class="btn rounded pxp-modal-cta"
+                                    style="width: 100%; align-content: center; margin-left: 15%; margin-right: 15%"
+                                    v-bind:disabled="next_button_disabled"
+                                    v-on:click="do_create_new_tinkoff_card_payment"
+                            >
+
+                                <span class="fa fa-credit-card" style="font-size: 2rem;"></span>
+                                <br>
+                                <p style="margin-bottom: 0">Оплатить банковской</p>
+                                <p style="margin-bottom: 0">картой</p>
+                            </button>
+
+<!--                            <button-->
+<!--                                    data-bs-target="#pxp-pay2-modal"-->
+<!--                                    data-bs-toggle="modal"-->
+<!--                                    data-bs-dismiss="modal"-->
+<!--                                    class="btn rounded pxp-modal-cta w-40"-->
+<!--                                    style="width: 48%;"-->
+<!--                                    type="button"-->
+<!--                                    v-bind:disabled="next_button_disabled"-->
+<!--                            >-->
+<!--                                <span class="fa fa-bank" style="font-size: 2rem;"></span>-->
+<!--                                <br>-->
+<!--                                Оплатить банковским переводом-->
+<!--                            </button>-->
+                        </div>
+
+                        <div class="mt-4 text-center pxp-modal-small">
+                            <a>Что нужно для оплаты?</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade pxp-user-modal" id="pxp-pay2-modal" aria-labelledby="signinModal" tabindex="-1"
+         style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <h5 class="modal-title text-center mt-4" id="signinModal">Ваши Реквизиты:</h5>
+                    <div class="col">
+
+                        <div class="pxp-hero-form pxp-hero-form-round mt-3 mt-lg-4">
+                            <div class="row gx-3 align-items-center">
+                                <div class="col-8 col-lg">
+                                    <div class="input-group mb-3 mb-lg-0">
+                                            <span class="input-group-text"><span
+                                                    class="fa fa-user-circle-o"></span></span>
+                                        <input
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="ИНН из кабинета"
+                                                style="border: none;"
+                                                v-model="inn"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="col-4 col-lg-auto">
+                                    <button
+                                            class="btn btn-primary"
+                                            style="width: 100px; border-radius: 30px; padding: 1rem"
+                                    >Обновить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="form-floating mb-3">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="pxp-signin-email"
+                                placeholder="КПП"
+                                v-model="kpp"
+                        >
+                        <label for="pxp-signin-email">КПП</label>
+
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="pxp-signin-email"
+                                placeholder="ИНН"
+                        >
+                        <label for="pxp-signin-email">Номер к/с</label>
+
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="pxp-signin-email" placeholder="ИНН">
+                        <label for="pxp-signin-email">Номер р/с</label>
+
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="pxp-signin-email" placeholder="ИНН">
+                        <label for="pxp-signin-email">БИК</label>
+
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="pxp-signin-email"
+                                placeholder="ИНН"
+                                v-model="address"
+                        >
+                        <label for="pxp-signin-email">Юр. Адрес</label>
+
+                    </div>
+
+                    <a
+                            href="#"
+                            class="btn rounded-pill pxp-modal-cta"
+                    >Сформировать счёт</a>
+
+                    <div class="mt-4 text-center pxp-modal-small">
+                        <a>Что нужно для оплаты?</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+

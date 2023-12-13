@@ -1,0 +1,6 @@
+{% load industrial_tags %}
+{% load cache %}
+
+{% cache 20 total_jobs_count_component_cache %}
+    {% total_companies_count %}
+{% endcache %}

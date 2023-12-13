@@ -1,0 +1,485 @@
+{% load static %}
+{% load core_tags %}
+{% load bulletin_board_tags %}
+
+<!doctype html>
+<html lang="ru" class="pxp-root">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block page_meta %}
+        <meta property="og:url" content="{{ request.path }}"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content=" Размещай вакансии на Jobox!"/>
+        <meta property="og:description"
+              content="3 вакансии бесплатно. Удобная админка. Качественный траффик. /Доска вакансий / Мульти-постинг / Подбор персонала /  Аутстаффинг /"/>
+        <meta property="og:image" content="{% static 'industrial/images/signup-fig.png' %}"/>
+    {% endblock %}
+
+    <link rel="shortcut icon" href="{% static 'industrial/images/favicon.png' %}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'industrial/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'industrial/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/style.css' %}">
+{#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js">#}
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <script  src="{% static 'industrial/js/jquery.mask.min.js' %}"></script>
+
+    <title>{% block page_title %}{% endblock %}</title>
+</head>
+<body
+        {% block body_style %}
+            style="background-color: var(--pxpMainColorLight);"
+        {% endblock %}
+>
+
+{% block base_body %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <div class="pxp-preloader"><span>Загрузка...</span></div>
+
+    <div class="pxp-dashboard-side-panel d-none d-lg-block">
+        <div class="pxp-logo">
+            <a href="{% url 'bulletin_board:index' %}" class="pxp-animate">
+                <img src="{% system_image_logo_big_url %}" style="height: 40px; width: 100px;" alt="Jobox"/>
+            </a>
+        </div>
+
+        <nav class=" mt-3 mt-lg-4 d-flex justify-content-between flex-column pb-100">
+            <div class="pxp-dashboard-side-label">
+                {#            Панель инструментов#}
+            </div>
+
+            <ul class="list-unstyled">
+                <li
+                        {% if current_nav_link == 'dashboard' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url 'industrial:dashboard' %}">
+                        <span class="fa fa-home"></span>Главная
+                    </a>
+                </li>
+                <li
+                        {% if current_nav_link == 'profile' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url 'industrial:profile' %}">
+                        <span class="fa fa-pencil"></span>Профиль
+                    </a>
+                </li>
+                <li
+                        {% if current_nav_link == 'new_job' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url 'industrial:add_new_job' %}">
+                        <span class="fa fa-file-text-o"></span>Добавить вакансию
+                    </a>
+                </li>
+                <li
+                        {% if current_nav_link == 'jobs_list' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url 'industrial:jobs_list' %}">
+                        <span class="fa fa-briefcase"></span>Мои вакансии
+                    </a>
+                </li>
+
+                <li
+                        {% if current_nav_link == 'candidates_list' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url "industrial:candidates" %}">
+                        <span class="fa fa-check"></span>
+                        Отклики
+                    </a>
+                </li>
+
+                <li
+                        {% if current_nav_link == 'finance' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url "industrial:finance" %}">
+                        <span class="fa fa-credit-card"></span>
+                        Финансы
+                    </a>
+                </li>
+
+                {#            <li#}
+                {#                    {% if current_nav_link == 'payment' %}#}
+                {#                        class="pxp-active"#}
+                {#                    {% endif %}#}
+                {#            >#}
+                {#                <a href="{% url 'industrial:payment" %}">#}
+                {#                    <span class="fa fa-credit-card"></span>#}
+                {#                    Оплата#}
+                {#                </a>#}
+                {#            </li>#}
+
+
+            </ul>
+
+            <div class="pxp-dashboard-side-label">
+                {#            Документы#}
+            </div>
+
+            <ul class="list-unstyled">
+                <li
+                        {% if current_nav_link == 'user_agreement' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url "industrial:user_agreement" %}">
+                        <span class="fa fa-certificate"></span>Оферта
+                    </a>
+                </li>
+
+                <li
+                        {% if current_nav_link == 'instruction' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url "industrial:instruction" %}">
+                        <span class="fa fa-file-text-o"></span>
+                        Инструкции
+                    </a>
+                </li>
+                <li
+                        {% if current_nav_link == 'support' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url "industrial:support" %}">
+                        <span class=" fa fa-podcast"></span>
+                        Поддержка
+                    </a>
+                </li>
+
+            </ul>
+            <div class="pxp-dashboard-side-label mt-3 mt-lg-4">
+                {#            Прочее#}
+            </div>
+            <ul class="list-unstyled">
+                <li>
+
+                </li>
+
+{#                            <li>#}
+{#                                <a href="company-dashboard-notifications.html"#}
+{#                                   class="d-flex justify-content-between align-items-center">#}
+{#                                    <div><span class="fa fa-bell-o"></span>Уведомления</div>#}
+{#                                    <span class="badge rounded-pill">5</span>#}
+{#                                </a>#}
+{#                            </li>#}
+
+            </ul>
+
+        </nav>
+
+
+    </div>
+    <div class="pxp-dashboard-content">
+        <div class="pxp-dashboard-content-header">
+            <div class="pxp-nav-trigger navbar pxp-is-dashboard d-lg-none">
+                <a role="button" data-bs-toggle="offcanvas" data-bs-target="#pxpMobileNav" aria-controls="pxpMobileNav">
+                    <div class="pxp-line-1"></div>
+                    <div class="pxp-line-2"></div>
+                    <div class="pxp-line-3"></div>
+                </a>
+                <div class="offcanvas offcanvas-start pxp-nav-mobile-container pxp-is-dashboard" tabindex="-1"
+                     id="pxpMobileNav">
+                    <div class="offcanvas-header">
+                        <div class="pxp-logo">
+                            <a href="{% url 'bulletin_board:index' %}"
+                               class="pxp-animate"
+                            >
+                                <img src="{% system_image_logo_big_url %}" style="height: 40px; width: 100px;" alt="Jobox"/>
+                            </a>
+                        </div>
+                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <nav class="pxp-nav-mobile">
+                            <ul class="navbar-nav justify-content-end flex-grow-1">
+                                <li
+                                        {% if current_nav_link == 'dashboard' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url "industrial:dashboard" %}">
+                                        <span class="fa fa-home"></span>Главная
+                                    </a>
+                                </li>
+                                <li
+                                        {% if current_nav_link == 'profile' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url 'industrial:profile' %}">
+                                        <span class="fa fa-pencil"></span>Профиль
+                                    </a>
+                                </li>
+                                <li
+                                        {% if current_nav_link == 'new_job' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url 'industrial:add_new_job' %}">
+                                        <span class="fa fa-file-text-o"></span>Добавить вакансию
+                                    </a>
+                                </li>
+                                <li
+                                        {% if current_nav_link == 'jobs_list' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url "industrial:jobs_list" %}">
+                                        <span class="fa fa-briefcase"></span>Мои вакансии
+                                    </a>
+                                </li>
+
+                                <li
+                                        {% if current_nav_link == 'candidates_list' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url "industrial:candidates" %}">
+                                        <span class="fa fa-check"></span>
+                                        Отклики
+                                    </a>
+                                </li>
+
+                                <li
+                                        {% if current_nav_link == 'finance' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url "industrial:finance" %}">
+                                        <span class="fa fa-credit-card"></span>
+                                        Финансы
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <br>
+
+
+                            <ul class="list-unstyled">
+                                <li
+                                        {% if current_nav_link == 'user_agreement' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url "industrial:user_agreement" %}">
+                                        <span class="fa fa-certificate"></span>Оферта
+                                    </a>
+                                </li>
+
+                                <li
+                                        {% if current_nav_link == 'instruction' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url "industrial:instruction" %}">
+                                        <span class="fa fa-file-text-o"></span>
+                                        Инструкции
+                                    </a>
+                                </li>
+                                <li
+                                        {% if current_nav_link == 'support' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url "industrial:support" %}">
+                                        <span class=" fa fa-podcast"></span>
+                                        Поддержка
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        {% if user.user_type == 'INT' %}
+            <div class="row">
+                <div class="col-sm-12 d-sm-block d-sm-none">
+                    {% if user.industrial_worker.company.name|length < 25 %}
+                    {{ user.industrial_worker.company.name }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 d-sm-block d-sm-none">
+                    <a class="btn rounded-pill pxp-nav-btn" href="{% url 'industrial:logout' %}">Выход</a>
+                </div>
+            </div>
+<!--            <div class="row">-->
+<!--                <div class="col-sm-4 d-sm-block d-sm-none">-->
+<!--                    <a class="btn rounded-pill pxp-nav-btn" href="{% url 'industrial:logout' %}">Выход</a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+
+            <nav class="pxp-user-nav pxp-on-light">
+                <a href="{% url 'industrial:add_new_job' %}" class="btn rounded-pill pxp-nav-btn">Разместить
+                    вакансию</a>
+<!--{#            <div class="dropdown pxp-user-nav-dropdown pxp-user-notifications">#}-->
+<!--{#                <a role="button" class="dropdown-toggle" href="company-dashboard-notifications.html">#}-->
+<!--{#                    <span class="fa fa-bell-o"></span>#}-->
+<!--{#                    <div class="pxp-user-notifications-counter">5</div>#}-->
+<!--{#                </a>#}-->
+<!--{##}-->
+<!--{#            </div>#}-->
+                <div class="dropdown pxp-user-nav-dropdown">
+                    <a role="button" class="dropdown-toggle" data-bs-toggle="dropdown">
+                        <div class="pxp-user-nav-avatar pxp-cover"
+                                {% if request.user.industrial_worker.company.brand_logo %}
+                             style="background-image: url({{ request.user.industrial_worker.company.brand_logo.url }});"
+                                {% else %}
+                             style="background-image: url({% system_image_company_default_logo_url %});"
+                                {% endif %}
+                        ></div>
+<!--                        <div class="pxp-user-nav-name d-none d-md-block">{{ user.industrial_worker.company.name }}</div>-->
+                        <div class="pxp-user-nav-name d-none d-md-block"><h5>Личный кабинет</h5></div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="pxp-user-nav-name d-none d-md-block">{{ user.industrial_worker.company.name }}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'industrial:dashboard' %}">Главная</a></li>
+                        <li><a class="dropdown-item" href="{% url 'industrial:profile' %}">Профиль</a></li>
+                        <li><a class="dropdown-item" href="{% url 'industrial:logout' %}">Выход</a></li>
+                    </ul>
+                </div>
+            </nav>
+        {% endif %}
+
+        </div>
+
+        <div class="pxp-dashboard-content-details">
+            {% block page_content %}#{% endblock %}
+        </div>
+
+
+        <footer>
+            <div class="pxp-footer-copyright pxp-text-light">© 2022 Jobox. Все права защищены.</div>
+        </footer>
+
+<span id="dash_app">
+    <div class="modal fade pxp-user-modal" id="pxp-edit-admin-modal" aria-hidden="true" aria-labelledby="EditAdminModal"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+
+                    <h5 class="modal-title text-center mt-4" id="signupModal">Данные администратора</h5>
+                    <form class="mt-4" method="post" action="{% url "industrial:edit_administrator_info" %}">
+                        {% csrf_token %}
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-admin-name" placeholder="Имя"
+                                   name="name"
+                                   value="{{ user.industrial_worker.name }}">
+                            <label for="pxp-signup-email">Имя администратора</label>
+                            <span class="fa fa-user-circle-o"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-admin-prof" placeholder="Должность"
+                                   name="position"
+                                   value="{{ user.industrial_worker.position }}"
+                            >
+                            <label for="pxp-signup-email">Должность</label>
+                            <span class="fa fa-address-card-o"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="tel" class="form-control" id="pxp-admin-phone" placeholder="Номер телефона"
+                                   name="phone"
+                                   value="{{ user.industrial_worker.phone }}"
+                            >
+                            <label for="pxp-signup-email">Номер телефона</label>
+                            <span class="fa fa-phone"></span>
+                        </div>
+
+
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="pxp-admin-email" placeholder="Почта"
+                                   name="email"
+                                   value="{{ user.industrial_worker.email|default_if_none:"" }}"
+                            >
+                            <label for="pxp-admin-email">Email</label>
+                            <span class="fa fa-envelope"></span>
+                        </div>
+
+
+                        <button type="submit" class="btn rounded-pill pxp-modal-cta w-100" data-bs-dismiss="modal">
+                            Сохранить
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</span>
+
+{% endblock %}
+
+
+
+<script src="{% static 'industrial/js/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'industrial/js/jquery.maskedinput.min.js' %}"></script>
+<script src="{% static 'industrial/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'industrial/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'industrial/js/nav.js' %}"></script>
+<script src="{% static 'industrial/js/Chart.min.js' %}"></script>
+<script src="{% static 'industrial/js/mask.js' %}"></script>
+<script src="{% static 'industrial/js/main.js' %}"></script>
+<script src="{% static 'industrial/js/test.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.select2-location').select2(
+            {
+                width: '100%',
+                padding: '1rem'
+            }
+        );
+    });
+
+    $(document).ready(function () {
+        $('.select2-jobs-catalog-location').select2(
+            {}
+        );
+    });
+</script>
+
+<style>
+    span.select2-selection--single {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        height: auto !important;
+        border-radius: 30px !important;
+    }
+</style>
+
+
+
+</body>
+</html>

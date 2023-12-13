@@ -1,0 +1,46 @@
+{% extends "industrial/base.html" %}
+{% load static %}
+{% load industrial_tags %}
+
+{% block page_title %}Финансы{% endblock %}
+
+{% block page_content %}
+    <h1>История пополнения счета <u>№ {{ user.industrial_worker.company.personal_account }}</u></h1>
+    <p class="pxp-text-light">В таблице отражены все операции по вашему лицевому счету, включая зачисления бонусов.</p>
+    <div class="mt-4 mt-lg-5">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Примечание</th>
+                    <th>Статус<span class="fa fa-angle-up ms-3"></span></th>
+                    <th>Сумма</th>
+                    <th>*</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for invoice in invoices %}
+                    <tr>
+                        <td>
+                            {{ invoice.created_at.date }}
+                        </td>
+                        <td>
+                            {{ invoice.comment }}
+                        </td>
+                        <td>
+                            {{ invoice.get_status_display }}
+                        </td>
+                        <td>
+                            {{ invoice.amount|floatformat:'0g' }} ₽
+                        </td>
+                        <td>
+                            <a href="{% url "industrial:payment_invoice" invoice_id=invoice.id %}">Посмотреть</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

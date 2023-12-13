@@ -1,0 +1,29 @@
+{% extends 'bulletin_board/base.html' %}
+{% load static %}
+{% load core_tags %}
+
+{% block page_meta %}
+    <meta property="og:url" content="{{ request.path }}"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="{{ job_instance.title }}"/>
+    <meta property="og:description"
+          content="{{ job_instance.salary|floatformat:'g' }} руб / {{ job_instance.salary_condition.title }}. График: {{ job_instance.work_schedule.title }}. Компания: {{ job_instance.company.name }} "/>
+    <meta property="og:image" content="/static/industrial/images/service-1-icon.png"/>
+{% endblock %}
+
+{% block page_content %}
+<section>
+    <div class="pxp-container">
+        <div class="pxp-single-candidate-container">
+            <div class="row justify-content-center">
+                {% include 'bulletin_board/components/summary.html' %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+{% endblock %}
+

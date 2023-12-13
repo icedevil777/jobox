@@ -1,0 +1,39 @@
+{% load static %}
+{% load core_tags %}
+{% for company in companies %}
+    <div class="col-md-6 col-xl-4 col-xxl-3 pxp-companies-card-1-container">
+        <div class="pxp-companies-card-1 pxp-has-shadow">
+            <div class="pxp-companies-card-1-top">
+                <a
+                        href="{% url "bulletin_board:company_view"  company_id=company.id %}"
+                        class="pxp-companies-card-1-company-logo"
+                        {% if company.brand_logo %}
+                        style="background-image: url({{ company.brand_logo.url }});"
+                        {% else %}
+                        style="background-image: url({% system_image_company_default_logo_url %}"></a>
+                        {% endif %}
+                >
+
+                </a>
+
+                <a
+                        href="{% url "bulletin_board:company_view"  company_id=company.id %}"
+                        class="pxp-companies-card-1-company-name"
+                >
+                    {{ company.name }}
+                </a>
+                <div class="pxp-companies-card-1-company-description pxp-text-light">
+                    {{ company.company_description | slice:":200" }}..
+                </div>
+            </div>
+            <div class="pxp-companies-card-1-bottom">
+                <a
+                        href="{% url "bulletin_board:company_view"  company_id=company.id %}"
+                        class="pxp-companies-card-1-company-jobs"
+                >
+                    {{ company.published_jobs }} вакансий
+                </a>
+            </div>
+        </div>
+    </div>
+{% endfor %}

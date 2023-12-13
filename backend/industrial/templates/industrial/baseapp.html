@@ -1,0 +1,350 @@
+<!doctype html>
+{% load static %}
+{% load core_tags %}
+{% load bulletin_board_tags %}
+
+<html lang="ru" class="pxp-root">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block page_meta %}
+        <meta property="og:url" content="{{ request.path }}"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content=" Размещай вакансии на Jobox!"/>
+        <meta property="og:description"
+              content="3 вакансии бесплатно. Удобная админка. Качественный траффик. /Доска вакансий / Мульти-постинг / Подбор персонала /  Аутстаффинг /"/>
+        <meta property="og:image" content="{% static 'industrial/images/signup-fig.png' %}"/>
+    {% endblock %}
+
+    <link rel="shortcut icon" href="{% static 'industrial/images/favicon.png' %}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'industrial/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'industrial/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'industrial/css/style.css' %}">
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <script src="{% static 'industrial/js/jquery.mask.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.js"></script>
+    <title>{% block page_title %}{% endblock %}</title>
+</head>
+<body
+        {% block body_style %}
+            style="background-color: var(--pxpMainColorLight);"
+        {% endblock %}
+>
+
+{% block base_body %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="{% static 'industrial/js/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'industrial/js/jquery.maskedinput.min.js' %}"></script>
+<script src="{% static 'industrial/js/bootstrap.bundle.min.js' %}"></script>
+
+    <div class="pxp-preloader"><span>Загрузка...</span></div>
+
+    <div class="pxp-dashboard-side-panel d-none d-lg-block">
+        <div class="pxp-logo">
+            <a href="{% url 'bulletin_board:index' %}" class="pxp-animate">
+                <img src="{% system_image_logo_big_url %}" style="height: 40px; width: 100px;" alt="Jobox"/>
+            </a>
+        </div>
+
+        <nav class=" mt-3 mt-lg-4 d-flex justify-content-between flex-column pb-100">
+            <div class="pxp-dashboard-side-label">
+
+                {#            Панель инструментов#}
+            </div>
+
+            <ul class="list-unstyled">
+
+                <li
+                    {% if current_nav_link == 'dashboardapp' %}
+                        class="pxp-active"
+                    {% endif %}
+                >
+                    <a href="{% url 'industrial:dashboardapp' %}">
+                        <span class="fa fa-home"></span>Главная
+                    </a>
+                </li>
+<!--                        {% if current_nav_link == 'summary' %}-->
+<!--                            class="pxp-active"-->
+<!--                        {% endif %}-->
+<!--                >-->
+<!--                    <a href="{% url 'industrial:summary' %}">-->
+<!--                        <svg style="margin-right: 7px" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-book-half" viewBox="0 0 16 16">-->
+<!--                          <path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>-->
+<!--                        </svg>-->
+<!--                        Мое резюме-->
+<!--                    </a>-->
+                <li
+                    {% if content.current_nav_link == 'edit_summary' %}
+                        class="pxp-active"
+                    {% endif %}
+                >
+                <a href="{% url 'industrial:edit_summary' %}">
+
+                    <span class="fa fa-pencil"></span>Редактировать резюме
+                </a>
+
+                </li>
+
+                <li
+                    {% if current_nav_link == 'user_agreement' %}
+                        class="pxp-active"
+                    {% endif %}>
+
+                    <a href="{% url 'industrial:user_agreementapp' %}">
+                        <span class="fa fa-certificate"></span>Оферта
+                    </a>
+                </li>
+
+<!--                <li-->
+<!--                        {% if current_nav_link == 'instructionapp' %}-->
+<!--                            class="pxp-active"-->
+<!--                        {% endif %}-->
+<!--                >-->
+<!--                    <a href="{% url 'industrial:instructionapp' %}">-->
+<!--                        <span class="fa fa-file-text-o"></span>-->
+<!--                        Инструкции-->
+<!--                    </a>-->
+<!--                </li>-->
+                <li
+                        {% if current_nav_link == 'supportapp' %}
+                            class="pxp-active"
+                        {% endif %}
+                >
+                    <a href="{% url 'industrial:supportapp' %}">
+                        <span class=" fa fa-podcast"></span>
+                        Поддержка
+                    </a>
+
+            </ul>
+
+
+        </nav>
+
+
+    </div>
+    <div class="pxp-dashboard-content">
+        <div class="pxp-dashboard-content-header">
+            <div class="pxp-nav-trigger navbar pxp-is-dashboard d-lg-none">
+                <a role="button" data-bs-toggle="offcanvas" data-bs-target="#pxpMobileNav" aria-controls="pxpMobileNav">
+                    <div class="pxp-line-1"></div>
+                    <div class="pxp-line-2"></div>
+                    <div class="pxp-line-3"></div>
+                </a>
+                <div class="offcanvas offcanvas-start pxp-nav-mobile-container pxp-is-dashboard" tabindex="-1"
+                     id="pxpMobileNav">
+                    <div class="offcanvas-header">
+                        <div class="pxp-logo">
+                            <a href="{% url 'bulletin_board:index' %}"
+                               class="pxp-animate"
+                            >
+                                <img src="{% system_image_logo_big_url %}" style="height: 40px; width: 100px;" alt="Jobox"/>
+                            </a>
+                        </div>
+                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <nav class="pxp-nav-mobile">
+                            <ul class="navbar-nav justify-content-end flex-grow-1">
+                                <li
+                                        {% if current_nav_link == 'dashboardapp' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url "industrial:dashboardapp" %}">
+                                        <span class="fa fa-home"></span>Главная
+                                    </a>
+                                </li>
+
+                            </ul>
+<!--                            <ul class="navbar-nav justify-content-end flex-grow-1">-->
+<!--                                <li-->
+<!--                                        {% if current_nav_link == 'dashboardapp' %}-->
+<!--                                            class="pxp-active"-->
+<!--                                        {% endif %}-->
+<!--                                >-->
+<!--                                    <a href="{% url 'industrial:summary' %}">-->
+<!--&lt;!&ndash;                                        <span class="fa fa-home"></span>&ndash;&gt;-->
+<!--                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-book-half" viewBox="0 0 16 16">-->
+<!--                                          <path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>-->
+<!--                                        </svg>-->
+<!--                                        Мое резюме-->
+<!--                                    </a>-->
+<!--                                </li>-->
+
+                            </ul>
+                            <ul class="navbar-nav justify-content-end flex-grow-1">
+                                <li
+                                        {% if current_nav_link == 'edit_summary' %}
+                                            class="pxp-active"
+                                        {% endif %}
+                                >
+                                    <a href="{% url "industrial:edit_summary" %}">
+                                        <span class="fa fa-pencil"></span>Редактировать резюме
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                            <ul class="navbar-nav justify-content-end flex-grow-1">
+                                <li
+                                        {% if current_nav_link == 'supportapp' %}
+                                class="pxp-active"
+                                {% endif %}
+                                >
+                                <a href="{% url 'industrial:supportapp' %}">
+                                <span class=" fa fa-podcast"></span>Поддержка
+                                </a>
+                                </li>
+
+                            </ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                {% if user.email|length < 25 %}
+                <div class="col-sm-8 d-sm-block d-sm-none" style="margin-right: 15px">
+                    <div class="pxp-text-blue text-end mb-0 mr-5" data-template-name="email"><span class="fa fa-envelope"></span><i> {{ user.email }} </i></div>
+                </div>
+                {% endif %}
+
+            </div>
+            <div class="row">
+                <div class="col-sm-4 d-sm-block d-sm-none">
+                    <a class="btn rounded-pill pxp-nav-btn" href="{% url 'industrial:logout' %}">Выход</a>
+                </div>
+            </div>
+
+            <nav class="pxp-user-nav pxp-on-light">
+                <div class="col-xxl-4" style="margin-right: 15px">
+                    <div class="pxp-text-blue text-end mb-0 mr-5" data-template-name="email"><span class="fa fa-envelope"></span><i> {{ user.email }} </i></div>
+                </div>
+                <a class="btn rounded-pill pxp-nav-btn" href="{% url 'industrial:logout' %}">Выход</a>
+            </nav>
+
+        </div>
+
+        <div class="pxp-dashboard-content-details">
+            {% block page_content %}#{% endblock %}
+        </div>
+
+
+        <footer>
+            <div class="pxp-footer-copyright pxp-text-light">© 2022 Jobox. Все права защищены.</div>
+        </footer>
+
+<span id="dash_app">
+    <div class="modal fade pxp-user-modal" id="pxp-edit-admin-modal" aria-hidden="true" aria-labelledby="EditAdminModal"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+
+                    <h5 class="modal-title text-center mt-4" id="signupModal">Данные администратора</h5>
+                    <form class="mt-4" method="post" action="{% url "industrial:edit_administrator_info" %}">
+                        {% csrf_token %}
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-admin-name" placeholder="Имя"
+                                   name="name"
+                                   value="{{ user.industrial_worker.name }}">
+                            <label for="pxp-signup-email">Имя администратора</label>
+                            <span class="fa fa-user-circle-o"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="pxp-admin-prof" placeholder="Должность"
+                                   name="position"
+                                   value="{{ user.industrial_worker.position }}"
+                            >
+                            <label for="pxp-signup-email">Должность</label>
+                            <span class="fa fa-address-card-o"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="tel" class="form-control" id="pxp-admin-phone" placeholder="Номер телефона"
+                                   name="phone"
+                                   value="{{ user.industrial_worker.phone }}"
+                            >
+                            <label for="pxp-signup-email">Номер телефона</label>
+                            <span class="fa fa-phone"></span>
+                        </div>
+
+
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="pxp-admin-email" placeholder="Почта"
+                                   name="email"
+                                   value="{{ user.industrial_worker.email|default_if_none:'' }}"
+                            >
+                            <label for="pxp-admin-email">Email</label>
+                            <span class="fa fa-envelope"></span>
+                        </div>
+
+
+                        <button type="submit" class="btn rounded-pill pxp-modal-cta w-100" data-bs-dismiss="modal">
+                            Сохранить
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</span>
+
+{% endblock %}
+
+
+<script src="{% static 'industrial/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'industrial/js/nav.js' %}"></script>
+<script src="{% static 'industrial/js/Chart.min.js' %}"></script>
+<script src="{% static 'industrial/js/mask.js' %}"></script>
+<script src="{% static 'industrial/js/main.js' %}"></script>
+<script src="{% static 'industrial/js/test.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.select2-location').select2(
+            {
+                width: '100%',
+                padding: '1rem'
+            }
+        );
+    });
+
+    $(document).ready(function () {
+        $('.select2-jobs-catalog-location').select2(
+            {}
+        );
+    });
+</script>
+
+<style>
+    span.select2-selection--single {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        height: auto !important;
+        border-radius: 30px !important;
+    }
+</style>
+
+
+
+</body>
+</html>

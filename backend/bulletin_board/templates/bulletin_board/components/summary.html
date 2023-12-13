@@ -1,0 +1,186 @@
+<div class="col-xxl-9 col-sm-6">
+    <h4>{{content.app_inst.second_name}} {{ content.app_inst.first_name }} {{content.app_inst.middle_name}}</h4>
+    <h4> {{ content.app_inst.name_app }} {% if content.app_inst.qualification != "Нет квалификации" %}  {{ content.app_inst.qualification }} {% endif %}</h4>
+    <div class="col-xxl-10 col-sm-12">
+        <h4>Ключевые навыки:</h4>
+        <div class="pxp-single-candidate-skills">
+            <ul class="list-unstyled">
+                {% for tag in content.teg_inst %} <li>{{tag.title}}</li> {% endfor %}
+            </ul>
+        </div>
+        <h4> Образование: </h4>
+        {% for edu in content.education_inst %}
+        <div class="col-xxl-12 col-sm-8 text-left border border-primary" style="border-radius: 15px; padding: 0.5%; margin-bottom: 0.5%;" >
+            {{ edu.name }} | {{ edu.faculty }} | {{ edu.specialization }} | {{ edu.level }} |<br> с {{ edu.start_data|date:"d-m-Y" }} по {{edu.end_data|date:"d-m-Y"}}
+        </div>
+        {% endfor %}
+
+        <h4> Опыт работы: </h4>
+        {% for exp in content.experience_inst %}
+        <div class="col-xxl-12 col-sm-8 text-left border border-primary" style="border-radius: 15px; padding: 0.5%; margin-bottom: 0.5%; word-wrap: break-word;">
+            {{ exp.name }} | {{  exp.position }} | {{  exp.function }} |<br> с {{ exp.start_data|date:"d-m-Y" }} по {{exp.end_data|date:"d-m-Y"}}
+        </div>
+        {% endfor %}
+
+
+        <h4>Дополнительная информация о себе:</h4>
+        <p style="text-align: justify; word-wrap: break-word">{{ content.app_inst.about_app|safe }}</p>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="row">
+        <div class="col-sm-12 col-xxl-4 text-left">
+            <h4>Контактный телефон: </h4>
+        </div>
+        <div class="col-sm-12 col-xxl-4 text-left">
+            <h4> {{ content.app_inst.tel }} </h4>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-sm-12 col-xxl-12 text-left"  style="font-size: 150%;">
+            <a>Для просмотра контактной информации необходимо</a>
+            <a href="{% url 'industrial:sign_in' %}">Войти</a>
+            <a>или</a>
+            <a href="{% url 'industrial:sign_up' %}">Зарегистрироваться</a>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<div class="col-xxl-3 col-sm-6" style="margin-bottom: 5%;">
+    <div class="pxp-single-candidate-side-panel mt-5 mt-lg-0">Доп информация
+        <div class="mt-4">
+            <div class="pxp-single-candidate-side-info-label pxp-text-light">Опыт работы</div>
+            <div class="pxp-single-candidate-side-info-data">{{ content.app_inst.experience }}</div>
+        </div>
+        <div class="mt-4">
+            <div class="pxp-single-candidate-side-info-label pxp-text-light">Дата рождения</div>
+            <div class="pxp-single-candidate-side-info-data">{{content.data}}</div>
+        </div>
+        {% if user.is_authenticated %}
+        <div class="mt-4">
+            <div class="pxp-single-candidate-side-info-label pxp-text-light">Телефон</div>
+            <div class="pxp-single-candidate-side-info-data">{{ content.app_inst.tel }}</div>
+        </div>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <div class="mt-4">
+            <div class="pxp-single-candidate-side-info-label pxp-text-light">Электронная почта</div>
+            <div class="pxp-single-candidate-side-info-data"><a>{{ content.app_inst.user.email }}</a></div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="pxp-single-candidate-side-panel mt-4 mt-lg-5">Доп условия труда
+        <div class="mt-4">
+            <div class="pxp-single-candidate-side-info-label pxp-text-light">Ищу работу в</div>
+            <div class="pxp-single-candidate-side-info-data">{{ content.app_inst.location }}</div>
+        </div>
+        <div class="mt-4">
+            <div class="pxp-single-candidate-side-info-label pxp-text-light">Условия работы</div>
+            <div class="pxp-single-candidate-side-info-data"><a>{{ content.app_inst.employment_type }}<br>{{ content.app_inst.work_schedule }}</a></div>
+        </div>
+        <div class="mt-4">
+            <div class="pxp-single-candidate-side-info-label pxp-text-light">Ожидаемая заработная плата</div>
+            <div class="pxp-single-candidate-side-info-data"><a>{{ content.app_inst.salary }} руб. {{ content.app_inst.salary_condition }}</a></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--<div class="row">-->
+<!--    <div class="col col-xxl-4 col-sm-12 d-flex justify-content-center">-->
+<!--        <div class="row" style="margin-bottom: 3%;">-->
+<!--            <a href="{% url 'industrial:edit_summary' %}"><button class="btn btn-primary">Редактировать резюме</button></a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="col col-xxl-4 col-sm-12 d-flex justify-content-center">-->
+<!--        <form action="" method="post" >-->
+<!--            {% csrf_token %}-->
+<!--            {% if content.app_inst.show_on_main_page %}-->
+<!--            <input  type="submit" value="Больше не ищу работу"  class="btn btn-danger" name="show">-->
+<!--            {% else %}-->
+<!--            <input type="submit" value="Разместить резюме на сайте" class="btn btn-primary" name="show">-->
+<!--            {% endif %}-->
+<!--        </form>-->
+<!--    </div>-->
+
+
+<!--</div>-->
+
+
+
+
+
+<div class="modal fade pxp-user-modal" id="edu_modal" aria-hidden="true"
+     aria-labelledby="need_to_pay_warning" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pxp-user-modal-fig text-center">
+                </div>
+                <h4 class="modal-title text-center mt-4">
+                    <a id="edu_name"></a><br>
+                    <a id="edu_specialization"></a><br>
+                    <a id="edu_level"></a><br>
+                    <a>Начало обучения:&nbsp<br></a><a id="edu_start_data"></a><br>
+                    <a>Конец обучения:&nbsp;<br></a><a id="edu_end_data"></a>
+                </h4>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade pxp-user-modal" id="exp_modal" aria-hidden="true"
+     aria-labelledby="need_to_pay_warning" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pxp-user-modal-fig text-center">
+                </div>
+                <h4 class="modal-title text-center mt-4">
+                    <a id="exp_name"></a><br>
+                    <a id="exp_position"></a><br>
+                    <a id="exp_function"></a><br>
+                    <a>Начало работы:<br>&nbsp;</a><a id="exp_start_data"></a><br>
+                    <a>Конец работы:<br>&nbsp;</a><a id="exp_end_data"></a>
+                </h4>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function show_modal_edu(name, specialization, level, start_data, end_data){
+        document.getElementById("edu_name").innerHTML = name;
+        document.getElementById("edu_specialization").innerHTML = specialization;
+        document.getElementById("edu_level").innerHTML = level;
+        document.getElementById("edu_start_data").innerHTML = start_data;
+        document.getElementById("edu_end_data").innerHTML = end_data;
+        const myModal777 = new bootstrap.Modal(document.getElementById('edu_modal'))
+        myModal777.show()
+    }
+
+    function show_modal_exp(name, position, functin, start_data, end_data) {
+        document.getElementById("exp_name").innerHTML = name;
+        document.getElementById("exp_position").innerHTML = position;
+        document.getElementById("exp_function").innerHTML = functin;
+        document.getElementById("exp_start_data").innerHTML = start_data;
+        document.getElementById("exp_end_data").innerHTML = end_data;
+        const myModal666 = new bootstrap.Modal(document.getElementById('exp_modal'))
+        myModal666.show()
+    }
+
+</script>

@@ -1,0 +1,8 @@
+{% load cache %}
+{% load static %}
+{% load industrial_tags %}
+{% load bulletin_board_tags %}
+
+{% cache 3600 system_image_company_default_logo %}
+    {{ image_instance.0.file.url }}
+{% endcache %}

@@ -1,0 +1,355 @@
+{% extends 'industrial/base.html' %}
+{% load static %}
+{% load industrial_tags %}
+{% block page_title %}Менеджер вакансий{% endblock %}
+{% block page_content %}
+
+<section id="app">
+    <h1>Менеджер вакансий </h1>
+    <p class="pxp-text-light">Размещайте вакансии в удобном менеджере. Здесь будут отображены все ваши вакансии со
+        статусом активности и сроком окончания публикации. Срок публикации ограничен 30 днями.</p>
+    <div class="mt-4 mt-lg-5" >
+        <div class="pxp-company-dashboard-jobs-search-search-form">
+            <div class="pxp-company-dashboard-jobs-bulk-actions mb-3">
+                {% new_invoice_button company=request.user.industrial_worker.company %}
+            </div>
+        </div>
+        <div class="row justify-content-between align-content-center">
+            <div class="col-auto order-2 order-sm-1">
+                <div class="pxp-company-dashboard-jobs-bulk-actions mb-3">
+                    <select class="form-select" v-model="status">
+                        <option value="">Показать все</option>
+                        <option value="moderation">На модерации</option>
+                        <option value="published">Опубликовано</option>
+                    </select>
+                    <button class="btn ms-2" v-on:click="load_jobs">Применить</button>
+                </div>
+            </div>
+            <div class="col-auto order-1 order-sm-2">
+                <div class="pxp-company-dashboard-jobs-search mb-3">
+                    <div class="pxp-company-dashboard-jobs-search-results me-3">[% jobs_list.length %] Вакансии</div>
+                    <div class="pxp-company-dashboard-jobs-search-search-form">
+                        <div class="input-group">
+                            <span class="input-group-text"><span class="fa fa-search"></span></span>
+                            <input
+                                    name="title"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Найти ( жми enter )"
+                                    v-model="search_title"
+                                    v-on:keyup.enter="load_jobs"
+                            >
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th style="width: 10%;">id</th>
+                    <th style="width: 25%;">Вакансия</th>
+                    <th style="width: 15%;">Условия</th>
+                    <th style="width: 10%;">Отклики</th>
+                    <th style="width: 10%;">Статус</th>
+                    <th style="width: 10%;">Дата архивации</th>
+                    <th style="width: 10%;">Управление</th>
+
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr v-for="job in jobs_list" :key="job.id">
+                    <td>
+                        <a href="#" class="pxp-company-dashboard-job-applications">#0000[% job.id %]</a>
+                    </td>
+                    <td>
+                        <a :href="job.view_url">
+                            <div class="pxp-company-dashboard-job-title">[% job.title %]</div>
+                            <div class="pxp-company-dashboard-job-location"><span
+                                    class="fa fa-globe me-1"></span>[% job.location %]
+                            </div>
+                        </a>
+                    </td>
+                    <td>
+                        <div class="pxp-company-dashboard-job-title">{{ job.employment_type.title }}</div>
+                        <div class="pxp-company-dashboard-job-location">
+                            [% job.salary %]
+                            <span class="fa fa-rub me-1"></span>/
+                            [% job.salary_condition %]
+                        </div>
+
+                    </td>
+                    <td>
+                        <a href="{% url 'industrial:candidates' %}" class="pxp-company-dashboard-job-applications">
+                            Откликов: [% job.responses %]
+                        </a>
+                    </td>
+                    <td>
+                        <div class="pxp-company-dashboard-job-status">
+                            <div v-if="job.status=='need_to_paid'">
+                                <span class="badge rounded-pill bg-warning">
+                                    Не оплачено
+                                </span>
+                                <br>
+                                <a href="#" v-on:click.prevent="show_pay_modal(job.id)">
+                                    <span class="fa fa-credit-card"></span> Оплатить
+                                </a>
+                            </div>
+
+                            <span
+                                    v-if="job.status=='moderation'"
+                                    class="badge rounded-pill bg-secondary">На модерации</span>
+
+                            <span
+                                    v-if="job.status=='rejected'"
+                                    class="badge rounded-pill bg-danger">Заблокирована</span>
+
+                            <span
+                                    v-if="job.status=='published'"
+                                    class="badge rounded-pill bg-success">Опубликована</span>
+
+                            <span
+                                    v-if="job.status=='expired'"
+                                    class="badge rounded-pill bg-success">Время истекло</span>
+
+                        </div>
+                        <div class="pxp-company-dashboard-job-date mt-1">
+                            от [% date_to_local(job.created_at) %]
+                        </div>
+                    </td>
+
+                    <td><a href="#"
+                           class="pxp-company-dashboard-job-applications">осталось [% job.expires_after_days %]
+                        дня</a>
+
+                    </td>
+
+                    <td>
+                        <div class="pxp-dashboard-table-options">
+
+                            <a :href="job.edit_url" title="Edit"><span
+                                    class="fa fa-pencil"></span></a>
+                            <a :href="job.view_url" title="Preview"><span
+                                    class="fa fa-eye"></span></a>
+                            <a :href="job.delete_url" title="Delete"><span
+                                    class="fa fa-trash-o"></span></a>
+
+{#                            <form action="" method="get">#}
+{#                                {% csrf_token %}#}
+{#                                <input type="hidden" value="{{ job }}" name="delete">#}
+{#                            <button  value="" name="delete" title="Delete"><span class="fa fa-trash-o"></span></button>#}
+
+                        </div>
+                    </td>
+                </tr>
+
+
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- Оплата за вакансию ------------------------------------------------------------------------------------>
+        <div class="modal fade pxp-user-modal" id="pay_for_job_modal" aria-hidden="true"
+             aria-labelledby="need_to_pay_warning" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="pxp-user-modal-fig text-center">
+                        </div>
+                        <h5 class="modal-title text-center mt-4" id="signupModal">
+                            #0000[% selected_job_id %]
+                            <br>
+                            Выберите способ оплаты
+                        </h5>
+                        <div class="mt-4">
+                            <div class="row">
+
+                                <div class="col-sm-6">
+                                    <div
+                                            v-bind:class="{payment_type_item:true,selected:(selected_payment_method=='ruble') ? true:false}"
+                                            v-on:click.prevent="change_payment_method('ruble')"
+                                    >
+                                        <i class="fa fa-ruble"></i>
+                                        <br>
+                                        <span>
+                                            [% price_ruble %] руб
+                                            <hr>
+                                            Баланс: [% balance_ruble %] руб
+
+                                        </span>
+                                        <hr>
+                                    <div class="pxp-company-dashboard-jobs-search-search-form">
+                                    <div class="pxp-company-dashboard-jobs-bulk-actions mb-3">
+                                    {% new_invoice_button company=request.user.industrial_worker.company %}
+                                    </div>
+                                    </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div
+                                            v-bind:class="{payment_type_item:true,selected:(selected_payment_method=='bonus_point') ? true:false}"
+                                            v-on:click.prevent="change_payment_method('bonus_point')"
+                                    >
+                                        <i class="fa fa-solid fa-gift"></i>
+                                        <br>
+                                        <span>
+                                            [% price_bonus %] балл
+                                            <hr>
+                                            Бонусы: [% balance_bonus %]
+                                        </span>
+                                        <hr>
+                                    </div>
+                                </div>
+                            </div>
+                        <p style="color: red" align="center"
+                           v-if="seen_empty_wallet"
+                           >На вашем счете недостаточно средств! </p>
+
+                        <p style="color: red" align="center"
+                           v-else-if="seen_empty_bonus"
+                           >На вашем счете недостаточно бонусов! </p>
+                        </div>
+
+                        <div class="mt-4">
+                            <button
+                                href="#"
+                                class="btn rounded-pill pxp-modal-cta w-100"
+                                v-bind:disabled="!is_pay_button_active"
+                                v-on:click="do_pay_for_job"
+                            >
+                                Оплатить
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade pxp-user-modal" id="need_to_pay_warning_modal" aria-hidden="true"
+         aria-labelledby="need_to_pay_warning" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pxp-user-modal-fig text-center">
+                    </div>
+                    <h5 class="modal-title text-center mt-4">
+                        <p>У вас есть неоплаченные вакансии, для их размещения нажмите кнопку</p>
+                             <div class="mt-4">
+                                <button data-bs-dismiss="modal"
+                                        href="#"
+                                        class="btn rounded-pill pxp-modal-cta w-100"
+                                        v-on:click.prevent="pay_new_job"
+                                >Разместить
+                                </button>
+                             </div>
+                    </h5>
+                    <form class="mt-4">
+                        <div class="mt-4 text-center pxp-modal-small">
+                            Возникли проблемы - <a href="{% url 'industrial:support' %}">сообщите нам</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <div class="modal fade pxp-user-modal" id="paid_modal" aria-hidden="true"
+         aria-labelledby="need_to_pay_warning" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pxp-user-modal-fig text-center">
+                    </div>
+                    <h5 class="modal-title text-center mt-4">
+                        <p>Вакансия успешно оплачена!</p>
+                             <div class="mt-4">
+                                <button data-bs-dismiss="modal"
+                                        href="#"
+                                        class="btn rounded-pill pxp-modal-cta w-100"
+                                        v-on:click.prevent="reload"
+                                >Ок
+                                </button>
+                             </div>
+                    </h5>
+                    <form class="mt-4">
+                        <div class="mt-4 text-center pxp-modal-small">
+                             Возникли проблемы - <a href="{% url 'industrial:support' %}">сообщите нам</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{#<script type="text/javascript">#}
+{#    function paid_action(){#}
+{#        const ReffModal= new bootstrap.Modal(document.getElementById('paid_modal'))#}
+{#        ReffModal.show()#}
+{##}
+{#    }#}
+{#</script>#}
+
+
+</section>
+<script type="application/javascript">
+    const default_inn = '{{ company.inn }}';
+    const default_kpp = '{{ company.kpp }}';
+    const default_address = '{{ company.address }}';
+    const url_new_tinkoff_card_payment = "{% url 'payment:new_tinkoff_card_payment' %}";
+    const url_jobs_list_api = "{% url 'industrial:jobs_list_api' %}";
+    const url_pay_for_job_api = "{% url 'industrial:pay_for_job_api' %}";
+    const const_price_ruble = {{ payment_ruble_price }};
+    const const_payment_bonus_point_price = {{ payment_bonus_point_price }};
+    const const_balance_ruble = {{ transaction_totals.ruble_total|floatformat:"0"|default:"0" }};
+    const const_balance_bonus = {{ transaction_totals.bonus_point_total|floatformat:"0"|default:"0" }};
+</script>
+
+<script type="text/javascript" src="{% static 'industrial/js/app.js' %}"></script>
+
+
+    <style>
+        .payment_type_item {
+            text-align: center;
+            border: 1px solid #f1f3f5;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            background: #f9fbfb;
+            height: 100%;
+        }
+
+        .payment_type_item.selected {
+        {#border-color: var(--pxpMainColorDark);#} color: #2100ff;
+            -webkit-box-shadow: 0px 0px 41px 12px rgba(185, 195, 202, 0.34);
+            -moz-box-shadow: 0px 0px 41px 12px rgba(185, 195, 202, 0.34);
+            box-shadow: 0px 0px 41px 12px rgba(185, 195, 202, 0.34);
+        }
+
+        .payment_type_item > i {
+            font-size: 70px;
+        }
+
+        .payment_type_item > span {
+            font-size: 18px;
+        }
+    </style>
+
+{% endblock %}

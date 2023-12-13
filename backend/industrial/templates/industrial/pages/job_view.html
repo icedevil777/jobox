@@ -1,0 +1,146 @@
+{% extends "industrial/base.html" %}
+{% block page_content %}
+    <div class="row justify-content-between align-content-center mb-4">
+        <div class="col-auto">
+            <h1>{{ job_instance.title }}</h1>
+            {% if job_instance.qualification != None %}
+            <h4>{{ job_instance.qualification }}</h4>
+            {% endif %}
+            <div class="pxp-single-job-company-location">
+                Опубликована {{ job_instance.published_at|date:"d-m-y" }} / осталось дней: {{ job_instance.expires_after_days }}
+            </div>
+
+        </div>
+        <div class="col-auto">
+            <a class="btn rounded-pill pxp-user-nav-trigger pxp-on-light"
+               href="{% url 'industrial:edit_job' job_id=job_instance.id %}" role="button"
+               style="border: 1px solid rgb(0 0 0 / 50%);color: #000; ">Редактировать</a>
+
+        </div>
+    </div>
+
+
+    <div class="pxp-single-job-content mt-4 mt-lg-5">
+        <div class="row">
+            <div class="col-lg-7 col-xl-8 col-xxl-12">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-xl-8 col-xxl-6">
+
+                        <div class="pxp-single-job-company-location">
+                            <span class="fa fa-globe"></span> <a href="single-company-1.html"
+                                                                 class="pxp-single-job-company">{{ job_instance.location.city }}</a>
+
+
+                        </div>
+                        <br>
+
+                        <h6 href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+                            <span class="fa fa-calendar"></span><b>тип
+                            занятости:</b> {{ job_instance.employment_type.title }}
+                        </h6>
+                        <h6 href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+                            <span class="fa fa-clock-o "></span><b>график
+                            работы:</b> {{ job_instance.work_schedule.title }}
+                        </h6>
+                        <h6 href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+                            <b>опыт работы:</b> {{ job_instance.experience.title }}
+                        </h6>
+
+
+                        <a href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <div class="pxp-single-job-options mt-4 col-xl-0">
+                            <h2 href="jobs-list-1.html" class="pxp-jobs-card-1-location">
+                                <b>{{ job_instance.salary }} <span class="fa fa-rub"></span></b>
+                                / {{ job_instance.salary_condition.title }}
+                            </h2>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4 justify-content-between align-items-center">
+                    <div class="col-6">
+                        <a href="{% url 'bulletin_board:jobs_catalog' %}?category={{ job_instance.category.id }}"
+                           class="pxp-single-job-category">
+                            <div class="pxp-single-job-category-icon"><span class="fa fa-bullhorn"></span></div>
+                            <div class="pxp-single-job-category-label">{{ job_instance.category.title }}</div>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="mt-4 mt-lg-5">
+                    <div class="pxp-single-candidate-skills">
+                        <ul class="list-unstyled">
+                            {% for tag in job_instance.tags.all %}
+                                <li>{{ tag.title }}</li>
+                            {% endfor %}
+
+                            {% for ind_tag in job_instance.ind_tags.all %}
+                                <li>{{ ind_tag.title }}</li>
+                            {% endfor %}
+
+                        </ul>
+                    </div>
+                </div>
+                <br>
+
+                <div class="accordion pxp-faqs-accordion" id="pxpFAQsAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="pxpFAQsHeader1">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#pxpCollapseFAQs1" aria-expanded="false"
+                                    aria-controls="pxpCollapseFAQs1">
+                                <b>Компания предлагает:</b>
+                            </button>
+                        </h2>
+                        <div id="pxpCollapseFAQs1" class="accordion-collapse" aria-labelledby="pxpFAQsHeader1"
+                             data-bs-parent="#pxpFAQsAccordion" style="">
+                            <div class="accordion-body" style="word-wrap: break-word; padding-right: 2%;">
+                                {{ job_instance.company_offers |linebreaksbr }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="pxpFAQsHeader2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#pxpCollapseFAQs2" aria-expanded="false"
+                                    aria-controls="pxpCollapseFAQs2">
+                                <b>Обязанности</b>
+                            </button>
+                        </h2>
+                        <div id="pxpCollapseFAQs2" class="accordion-collapse collapse" aria-labelledby="pxpFAQsHeader2"
+                             data-bs-parent="#pxpFAQsAccordion" style="">
+                            <div class="accordion-body" style="word-wrap: break-word; padding-right: 2%; ">
+                                {{ job_instance.about_job |linebreaksbr }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="pxpFAQsHeader3">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#pxpCollapseFAQs3" aria-expanded="true"
+                                    aria-controls="pxpCollapseFAQs3">
+                                <b> Требования к соискателю</b>
+                            </button>
+                        </h2>
+                        <div id="pxpCollapseFAQs3" class="accordion-collapse collapse show"
+                             aria-labelledby="pxpFAQsHeader3" data-bs-parent="#pxpFAQsAccordion" style="">
+                            <div class="accordion-body" style="word-wrap: break-word; padding-right: 2%;">
+                                {{ job_instance.requirements | linebreaksbr }}
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

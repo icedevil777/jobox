@@ -1,0 +1,70 @@
+{% if content.app_inst.have_tabel %}
+<table class="table">
+    {% if content.app_inst.have_experience %}
+    <thead>
+        <tr>
+            <th>Организация</th>
+            <th>Должность</th>
+            <th colspan="2" >Обязанности</th>
+            <th>Период работы</th>
+        </tr>
+    </thead>
+    {% for inst in content.experience_inst %}
+    <tbody>
+        <tr>
+            <td>{{ inst.name }}</td>
+            <td>{{ inst.position }}</td>
+            <td colspan="2" >{{ inst.function }}</td>
+            <td>{{ inst.start_data|date:"d.m.Y" }} - {{ inst.end_data|date:"d.m.Y"}}</td>
+        </tr>
+    </tbody>
+    {% endfor %}
+    {% endif %}
+    {% if content.app_inst.have_education %}
+    <thead>
+        <tr>
+            <th>Учебное заведение</th>
+            <th>Факультет</th>
+            <th>Специальность</th>
+            <th>Уровень образования</th>
+            <th>Период обучения</th>
+        </tr>
+    </thead>
+    {% for inst in content.education_inst %}
+    <tbody>
+        <tr>
+            <td>{{ inst.name }}</td>
+            <td>{{ inst.faculty }}</td>
+            <td>{{ inst.specialization }}</td>
+            <td>{{ inst.level }}</td>
+            <td>{{ inst.start_data|date:"d.m.Y" }}-{{ inst.end_data|date:"d.m.Y" }}</td>
+        </tr>
+    </tbody>
+    {% endfor %}
+    {% endif %}
+</table>
+{% endif %}
+
+
+<style>
+.table {
+	width: 100%;
+	margin-bottom: 20px;
+	border: 2px solid #dddddd;
+	border-collapse: collapse;
+
+}
+
+.table th {
+	font-weight: bold;
+	padding: 5px;
+	background: #efefef;
+	border: 2px solid #dddddd;
+}
+
+.table td {
+	border: 2px solid #dddddd;
+	padding: 5px;
+}
+
+</style>
